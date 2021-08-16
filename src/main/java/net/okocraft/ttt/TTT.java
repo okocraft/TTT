@@ -13,6 +13,21 @@ import org.jetbrains.annotations.NotNull;
 
 import net.okocraft.ttt.config.Config;
 
+/**
+ * 追加予定
+ * * 自然湧きTT検知機能
+ * * silkspawnerのような機能
+ * * mobstackerの機能
+ * * 一定範囲でのスポナー数制限機能
+ * * スポナー保護機能
+ * * スポナー使用権機能(使用権のあるプレイヤーのみ攻撃でき、ドロップアイテムを拾える)
+ * * 総湧き数制限機能
+ * * スポナーの湧き止め機能(レッドストーンのあれ)
+ * * wg保護内部でスポナーのモブのみを制限するフラグ
+ * * モブの湧き数制限
+ * * クリックボットの禁止（interacteventでやると長押しも判定されるのでダメ）
+ * * spawner eggで中身を変えるかどうかの権限
+ */
 public class TTT extends JavaPlugin implements Listener {
 
     private Config config;
@@ -20,7 +35,6 @@ public class TTT extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.config = new Config(this);
-
         getCommand("ttt").setExecutor(this);
 
         getServer().getPluginManager().registerEvents(this, this);

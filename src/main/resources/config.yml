@@ -1,2 +1,46 @@
-test:
-  '1': aiueo
+# When player break spawner with silktouch,
+# block drops spawner item. 
+drop-spawner:
+  enabled: true
+  needs-silktouch: false
+# Stack mobs.
+mob-stacker:
+  enabeld: true
+  target-spawn-reason:
+    - SPAWNER
+# Find mob farms.
+# If spawn reason includes BLEEDING,
+# you can also find normal farm that is not traps.
+find-traps:
+  enabled: true
+  check-spawn-reason:
+    - SPAWNER
+    - NATURAL
+    - SLIME_SPLIT
+    - RAID
+# limit spanwer amount in specific radius (circle)
+spawner-amount-limiter:
+  enabled: true
+  radius: 34
+  amount: 2
+
+spawner-ownership:
+  enabled: true
+  placer-autoclaim: true
+
+
+anti-clickbot:
+  enabled: true
+  # Available types are: SUMMON_ENEMY, CANCEL, KILL, KICK, CALL_ADMIN
+  # SUMMON_ENEMY will teleport nearest agressive mobs
+  # CANCEL will cancel clicks
+  # KILL will kill clicking player
+  # KICK will kick clicking player
+  # CALL_ADMIN will notify admins that click bot is used.
+  type: SUMMON_ENEMY
+  warn-before: true
+  warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
+
+redstone-signal-stops-spawner: true
+deny-changing-spawner-mob: true
+
