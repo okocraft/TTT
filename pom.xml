@@ -7,8 +7,10 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.charset>UTF-8</project.charset>
+        <java.version>16</java.version>
+        <project.build.sourceEncoding>${project.charset}</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.charset}</project.reporting.outputEncoding>
     </properties>
 
     <repositories>
@@ -71,9 +73,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>16</release>
-                    <encoding>UTF-8</encoding>
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.charset}</encoding>
                 </configuration>
             </plugin>
         </plugins>
