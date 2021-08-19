@@ -1,5 +1,8 @@
 package net.okocraft.ttt;
 
+import com.github.siroshun09.configapi.api.util.ResourceUtils;
+import com.github.siroshun09.translationloader.directory.TranslationDirectory;
+import net.kyori.adventure.key.Key;
 import net.okocraft.ttt.command.TTTCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,6 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import net.okocraft.ttt.config.Config;
 
 import java.util.Optional;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Locale;
+import java.util.logging.Level;
 
 /**
  * 追加予定
@@ -33,7 +41,21 @@ import java.util.Optional;
  */
 public class TTT extends JavaPlugin implements Listener {
 
+    private final TranslationDirectory translationDirectory =
+            new TranslationDirectory(getDataFolder().toPath().resolve("languages"), Key.key("ttt", "languages"));
     private Config config;
+
+    @Override
+    public void onLoad() {
+        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
+
+        try {
+            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load language files.", e);
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -50,6 +72,7 @@ public class TTT extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        translationDirectory.unload();
     }
 
     public Config getMainConfig() {
@@ -86,5 +109,10 @@ public class TTT extends JavaPlugin implements Listener {
             event.setDroppedExp(0);
             event.getDrops().clear();
         }
+    }
+
+    private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
+        var japanese = "ja_JP.yml";
+        ResourceUtils.copyFromJar(getFile().toPath(), "ja_JP.yml", directory.resolve(japanese));
     }
 }
