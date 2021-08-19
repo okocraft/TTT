@@ -1,5 +1,6 @@
 package net.okocraft.ttt;
 
+import net.okocraft.ttt.command.TTTCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,6 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import net.okocraft.ttt.config.Config;
+
+import java.util.Optional;
 
 /**
  * 追加予定
@@ -35,7 +38,8 @@ public class TTT extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.config = new Config(this);
-        getCommand("ttt").setExecutor(this);
+
+        Optional.ofNullable(getCommand("ttt")).ifPresent(cmd -> TTTCommand.register(this, cmd));
 
         getServer().getPluginManager().registerEvents(this, this);
     }
