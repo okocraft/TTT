@@ -41,8 +41,10 @@ import java.util.logging.Level;
  */
 public class TTT extends JavaPlugin implements Listener {
 
+    private final Path pluginDirectory = getDataFolder().toPath();
+
     private final TranslationDirectory translationDirectory =
-            new TranslationDirectory(getDataFolder().toPath().resolve("languages"), Key.key("ttt", "languages"));
+            new TranslationDirectory(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
     private Config config;
 
     @Override
@@ -77,6 +79,10 @@ public class TTT extends JavaPlugin implements Listener {
 
     public Config getMainConfig() {
         return this.config;
+    }
+
+    public @NotNull Path getPluginDirectory() {
+        return pluginDirectory;
     }
 
     /**
