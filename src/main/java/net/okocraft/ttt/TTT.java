@@ -46,7 +46,7 @@ public class TTT extends JavaPlugin implements Listener {
             YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
 
     private final TranslationDirectory translationDirectory =
-            new TranslationDirectory(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
+            TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
 
     @Override
     public void onLoad() {
