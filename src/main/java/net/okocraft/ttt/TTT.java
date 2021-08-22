@@ -1,6 +1,7 @@
 package net.okocraft.ttt;
 
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
+import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.okocraft.ttt.command.TTTCommand;
@@ -14,8 +15,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import net.okocraft.ttt.config.Config;
 
 import java.util.Optional;
 
@@ -43,12 +42,21 @@ public class TTT extends JavaPlugin implements Listener {
 
     private final Path pluginDirectory = getDataFolder().toPath();
 
+    private final YamlConfiguration configuration =
+            YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
+
     private final TranslationDirectory translationDirectory =
             new TranslationDirectory(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
-    private Config config;
 
     @Override
     public void onLoad() {
+        try {
+            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
+            configuration.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+        }
+
         translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
 
         try {
@@ -61,8 +69,6 @@ public class TTT extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        this.config = new Config(this);
-
         var cmd =
                 Optional.ofNullable(getCommand("ttt"))
                         .orElseThrow(() -> new IllegalStateException("Could not get /ttt command"));
@@ -77,8 +83,8 @@ public class TTT extends JavaPlugin implements Listener {
         translationDirectory.unload();
     }
 
-    public Config getMainConfig() {
-        return this.config;
+    public @NotNull YamlConfiguration getConfiguration() {
+        return configuration;
     }
 
     public @NotNull Path getPluginDirectory() {
@@ -86,19 +92,22 @@ public class TTT extends JavaPlugin implements Listener {
     }
 
     /**
-     * @deprecated Use {@link #getMainConfig()}.
+     * @deprecated Use {@link #getConfiguration()}.
      */
     @Deprecated
     @Override
-    public FileConfiguration getConfig() {
-        return config.get();
+    public @NotNull FileConfiguration getConfig() {
+        throw new UnsupportedOperationException();
     }
 
+    /**
+     * @deprecated Use {@link com.github.siroshun09.configapi.api.file.FileConfiguration#reload()}.
+     */
+    @Deprecated
     @Override
     public void reloadConfig() {
-        config.reload();
+        throw new UnsupportedOperationException();
     }
-
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
