@@ -39,7 +39,11 @@ public class TTT extends JavaPlugin implements Listener {
     public void onEnable() {
         this.config = new Config(this);
 
-        Optional.ofNullable(getCommand("ttt")).ifPresent(cmd -> TTTCommand.register(this, cmd));
+        var cmd =
+                Optional.ofNullable(getCommand("ttt"))
+                        .orElseThrow(() -> new IllegalStateException("Could not get /ttt command"));
+
+        TTTCommand.register(this, cmd);
 
         getServer().getPluginManager().registerEvents(this, this);
     }
