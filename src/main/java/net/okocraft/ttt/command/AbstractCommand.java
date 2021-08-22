@@ -14,6 +14,10 @@ public abstract class AbstractCommand {
     private final String permission;
     private final Set<String> aliases;
 
+    public AbstractCommand(@NotNull String name, @NotNull String permission) {
+        this(name, permission, Collections.emptySet());
+    }
+
     public AbstractCommand(@NotNull String name, @NotNull String permission, @NotNull Set<String> aliases) {
         this.name = name;
         this.permission = permission;
