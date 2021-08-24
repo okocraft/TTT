@@ -5,6 +5,8 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.okocraft.ttt.command.TTTCommand;
+import net.okocraft.ttt.module.spawner.SpawnerListener;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,17 +28,19 @@ import java.util.logging.Level;
 /**
  * 追加予定
  * * 自然湧きTT検知機能
- * * silkspawnerのような機能
  * * mobstackerの機能
- * * 一定範囲でのスポナー数制限機能
- * * スポナー保護機能
  * * スポナー使用権機能(使用権のあるプレイヤーのみ攻撃でき、ドロップアイテムを拾える)
  * * 総湧き数制限機能
- * * スポナーの湧き止め機能(レッドストーンのあれ)
  * * wg保護内部でスポナーのモブのみを制限するフラグ
  * * モブの湧き数制限
  * * クリックボットの禁止（interacteventでやると長押しも判定されるのでダメ）
+ * 
+ * 追加済み
+ * * silkspawnerのような機能
  * * spawner eggで中身を変えるかどうかの権限
+ * * 一定範囲でのスポナー数制限機能
+ * * スポナー保護機能
+ * * スポナーの湧き止め機能(レッドストーンのあれ)
  */
 public class TTT extends JavaPlugin implements Listener {
 
@@ -47,6 +51,8 @@ public class TTT extends JavaPlugin implements Listener {
 
     private final TranslationDirectory translationDirectory =
             TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
+
+    private final SpawnerUtil spawnerUtil = new SpawnerUtil(this);
 
     @Override
     public void onLoad() {
@@ -76,6 +82,7 @@ public class TTT extends JavaPlugin implements Listener {
         TTTCommand.register(this, cmd);
 
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new SpawnerListener(this), this);
     }
 
     @Override
@@ -129,5 +136,9 @@ public class TTT extends JavaPlugin implements Listener {
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
         var japanese = "ja_JP.yml";
         ResourceUtils.copyFromJar(getFile().toPath(), "ja_JP.yml", directory.resolve(japanese));
+    }
+
+    public SpawnerUtil getSpawnerUtil() {
+        return spawnerUtil;
     }
 }
