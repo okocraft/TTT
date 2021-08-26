@@ -154,10 +154,12 @@ public class SpawnerListener implements Listener {
                 spawnerUtil.getDefaultSpawnableMobs(spawner.getSpawnedType())
         ));
 
-        if (config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE)) {
-            event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP_REVERSE);
-        } else {
-            event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP);
+        if (config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS).contains(block.getWorld().getName())) {
+            if (config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE)) {
+                event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP_REVERSE);
+            } else {
+                event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP);
+            }
         }
     }
 
