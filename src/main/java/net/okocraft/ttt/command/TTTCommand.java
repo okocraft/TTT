@@ -23,7 +23,9 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
 
     private TTTCommand(@NotNull TTT plugin) { // for subcommand
         super("ttt", "ttt.command", Collections.emptySet());
-        this.subCommands = List.of();
+        this.subCommands = List.of(
+            new GetSpawner(plugin)
+        );
     }
 
     public static void register(@NotNull TTT plugin, @NotNull PluginCommand command) {
