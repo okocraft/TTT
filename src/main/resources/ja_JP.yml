@@ -7,9 +7,13 @@ shown-spawner-status: "\n-------------------\n起動状態: {0}\nスポーンさ
 spawner-start-tip: "スポナーにレッドストーン動力を与えるとスポナーを停止できます。"
 spawner-start-tip-reverse: "スポナーにレッドストーン動力を与えるとスポナーを起動できます。"
 cannot-change-spawner: "スポナーの中のモブを変更することはできません。"
+too-many-spawners: "スポナーの数が多すぎます。半径{0}ブロックにつき{1}個までしか設置できません。"
 
 command:
   no-permission: "権限がありません。"
   not-enough-arguments: "引数が足りません。"
   invalid-entity-type: "不正なエンティティタイプ名です。"
   player-only: "このコマンドはプレイヤーしか使えません。"
+  near:
+    header: "近くのスポナー:"
+    entry: "タイプ: {0}, 場所: {1}"

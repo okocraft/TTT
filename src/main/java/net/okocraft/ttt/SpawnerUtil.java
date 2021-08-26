@@ -1,15 +1,20 @@
 package net.okocraft.ttt;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import com.github.siroshun09.configapi.api.Configuration;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -197,5 +202,24 @@ public final class SpawnerUtil {
         }
 
         return block.isBlockPowered() || block.isBlockIndirectlyPowered();
+    }
+
+    public List<CreatureSpawner> getSpawnersIn(int radius, Location center) {
+        List<CreatureSpawner> result = new ArrayList<>();
+        int chunks = (radius / 16) + 1;
+        Chunk centerChunk = center.getChunk();
+        for (int chunkX = centerChunk.getX() - chunks; chunkX <= centerChunk.getX() + chunks; chunkX++) {
+            for (int chunkZ = centerChunk.getZ() - chunks; chunkZ <= centerChunk.getZ() + chunks; chunkZ++) {
+                Chunk chunk = center.getWorld().getChunkAt(chunkX, chunkZ);
+                for (BlockState tile : chunk.getTileEntities()) {
+                    if (tile instanceof CreatureSpawner spawner) {
+                        if (tile.getLocation().distanceSquared(center) <= radius * radius) {
+                            result.add(spawner);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

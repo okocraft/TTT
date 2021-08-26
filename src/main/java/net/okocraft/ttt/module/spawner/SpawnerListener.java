@@ -9,14 +9,13 @@ import java.util.Set;
 
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -119,26 +118,14 @@ public class SpawnerListener implements Listener {
 
         int maxSpawners = config.get(Settings.SPAWNER_ISOLATING_AMOUNT);
         int radius = config.get(Settings.SPAWNER_ISOLATING_RADIUS);
-        int chunks = (radius / 16) + 1;
-        Chunk placedChunk = placed.getChunk();
 
-        int spawnersInRadius = 0;
-        for (int chunkX = placedChunk.getX() - chunks; chunkX <= placedChunk.getX() + chunks; chunkX++) {
-            for (int chunkZ = placedChunk.getZ() - chunks; chunkZ <= placedChunk.getZ() + chunks; chunkZ++) {
-                Chunk chunk = placed.getWorld().getChunkAt(chunkX, chunkZ);
-
-                for (BlockState tile : chunk.getTileEntities()) {
-                    if (tile instanceof CreatureSpawner) {
-                        if (tile.getLocation().distanceSquared(placed.getLocation()) < radius * radius) {
-                            spawnersInRadius++;
-                            if (maxSpawners < spawnersInRadius) {
-                                event.setCancelled(true);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
+        if (spawnerUtil.getSpawnersIn(radius, placed.getLocation()).size() > maxSpawners) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(Messages.TOO_MANY_SPAWNERS.apply(
+                    config.get(Settings.SPAWNER_ISOLATING_RADIUS),
+                    config.get(Settings.SPAWNER_ISOLATING_AMOUNT)
+            ));
+            return;
         }
     }
 

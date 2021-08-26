@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.bukkit.Location;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 
 import static net.kyori.adventure.text.Component.text;
@@ -34,6 +36,32 @@ public final class Messages {
 
     public static final Component COMMAND_PLAYER_ONLY =
             PREFIX.toBuilder().append(translatable("command.player-only", RED)).build();
+
+    public static final Component COMMAND_NEAR_HEADER =
+            PREFIX.toBuilder().append(translatable("command.player-only", RED)).build();
+
+    public static final Function<CreatureSpawner, Component> COMMAND_NEAR_ENTRY =
+            spawner -> {
+                Location loc = spawner.getLocation();
+                String locStr = loc.getWorld().getName() + "/" + loc.getBlockX() + "/" + loc.getBlockY() + "/" + loc.getBlockZ();
+            
+                return translatable()
+                        .key("too-many-spawners")
+                        .args(translatable(spawner.getType(), AQUA), text(locStr, AQUA))
+                        .color(RED)
+                        .build();
+            };
+
+    public static final BiFunction<Integer, Integer, Component> TOO_MANY_SPAWNERS =
+            (range, amount) -> PREFIX.toBuilder()
+                    .append(
+                            translatable()
+                                    .key("too-many-spawners")
+                                    .args(text(range, AQUA), text(amount, AQUA))
+                                    .color(RED)
+                                    .build()
+                    )
+                    .build();
 
     public static final QuadFunction<Boolean, EntityType, Integer, Integer, Component> SHOWN_SPAWNER_STATUS =
             (running, type, limit, maxLimit) -> PREFIX.toBuilder()
