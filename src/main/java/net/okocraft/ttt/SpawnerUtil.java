@@ -97,17 +97,20 @@ public final class SpawnerUtil {
     }
 
     public void changeLocale(ItemStack spawner, Locale locale) {
-        if (spawner.getType() == Material.SPAWNER) {
+        if (spawner.getType() != Material.SPAWNER) {
             return;
         }
 
-        EntityType type = getEntityTypeFrom(spawner).orElse(EntityType.PIG);
-        
-        ItemMeta meta = spawner.getItemMeta();
-        spawner.getItemMeta().displayName(GlobalTranslator.render(Messages.SPAWNER_DISPLAY_NAME.apply(type), locale));
-        // TODO: Messages lore list component getter plzzzz.
-        
-        spawner.setItemMeta(meta);
+        getEntityTypeFrom(spawner).ifPresent(type -> {
+            ItemMeta meta = spawner.getItemMeta();
+            meta.displayName(GlobalTranslator.render(Messages.SPAWNER_DISPLAY_NAME.apply(type), locale));
+            meta.lore(List.of(GlobalTranslator.render(Messages.SPAWNER_LORE.apply(
+                    getSpawnableMobs(spawner),
+                    getDefaultSpawnableMobs(type)
+            ), locale)));
+            
+            spawner.setItemMeta(meta);
+        });
     }
 
     public Optional<EntityType> getEntityTypeFrom(ItemStack spawner) {

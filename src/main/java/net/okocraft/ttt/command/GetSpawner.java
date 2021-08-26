@@ -28,6 +28,10 @@ public class GetSpawner extends AbstractCommand {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
+        if (!checkPermission(sender)) {
+            sender.sendMessage(Messages.COMMAND_NO_PERMISSION);
+            return;
+        }
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Messages.COMMAND_PLAYER_ONLY);
             return;

@@ -1,8 +1,7 @@
 plugin-prefix: "[TTT] "
 spawner-item:
   display-name: "{0} のスポナー"
-  lore:
-  - "全生成モブ数: {0}/{1}"
+  lore: "スポーン可能モブ数: {0}/{1}"
 
 shown-spawner-status: "\n-------------------\n起動状態: {0}\nスポーンされるモブ: {1}\nスポーン可能モブ数: {2}/{3}\n-------------------"
 spawner-start-tip: "スポナーにレッドストーン動力を与えるとスポナーを停止できます。"
@@ -10,6 +9,7 @@ spawner-start-tip-reverse: "スポナーにレッドストーン動力を与え�
 cannot-change-spawner: "スポナーの中のモブを変更することはできません。"
 
 command:
+  no-permission: "権限がありません。"
   not-enough-arguments: "引数が足りません。"
   invalid-entity-type: "不正なエンティティタイプ名です。"
   player-only: "このコマンドはプレイヤーしか使えません。"

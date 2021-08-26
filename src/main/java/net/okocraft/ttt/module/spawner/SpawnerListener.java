@@ -209,8 +209,8 @@ public class SpawnerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onInventoryOpen(InventoryOpenEvent event) {
         for (ItemStack item : event.getInventory()) {
-            if (item.getType() == Material.SPAWNER) {
-                
+            if (item != null && item.getType() == Material.SPAWNER) {
+                spawnerUtil.changeLocale(item, ((Player) event.getPlayer()).locale());
             }
         }
     }

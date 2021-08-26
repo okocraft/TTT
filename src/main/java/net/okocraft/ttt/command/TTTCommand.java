@@ -1,6 +1,8 @@
 package net.okocraft.ttt.command;
 
 import net.okocraft.ttt.TTT;
+import net.okocraft.ttt.config.Messages;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +40,7 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
     @Override
     public void onCommand(@NotNull CommandSender sender, @NotNull String[] args) {
         if (!checkPermission(sender)) {
+            sender.sendMessage(Messages.COMMAND_NO_PERMISSION);
             return;
         }
 

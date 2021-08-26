@@ -3,8 +3,11 @@ package net.okocraft.ttt.config;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.format.TextDecoration.State;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.bukkit.entity.EntityType;
@@ -19,6 +22,9 @@ import static net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE;
 public final class Messages {
 
     private static final TranslatableComponent PREFIX = translatable("plugin-prefix", GRAY);
+
+    public static final Component COMMAND_NO_PERMISSION =
+            PREFIX.toBuilder().append(translatable("command.no-permission", RED)).build();
 
     public static final Component COMMAND_NOT_ENOUGH_ARGUMENTS =
             PREFIX.toBuilder().append(translatable("command.not-enough-arguments", RED)).build();
@@ -54,25 +60,19 @@ public final class Messages {
             PREFIX.toBuilder().append(translatable("cannot-change-spawner", GRAY)).build();
 
     public static final Function<EntityType, Component> SPAWNER_DISPLAY_NAME =
-            entityType -> PREFIX.toBuilder()
-                    .append(
-                            translatable()
-                                    .key("spawner-item.display-name")
-                                    .args(translatable(entityType, AQUA))
-                                    .color(LIGHT_PURPLE)
-                                    .build()
-                    )
+            entityType -> translatable()
+                    .key("spawner-item.display-name")
+                    .args(translatable(entityType))
+                    .color(LIGHT_PURPLE)
+                    .decoration(TextDecoration.ITALIC, State.FALSE)
                     .build();
 
-    public static final TriFunction<Integer, Integer, Integer, Component> SPAWNER_LORE =
-            (index, limit, limitMax) -> PREFIX.toBuilder()
-                    .append(
-                            translatable()
-                                    .key("spawner-item.lore" + index)
-                                    .args(text(limit), text(limitMax))
-                                    .color(GRAY)
-                                    .build()
-                    )
+    public static final BiFunction<Integer, Integer, Component> SPAWNER_LORE =
+            (limit, limitMax) -> translatable()
+                    .key("spawner-item.lore")
+                    .args(text(limit), text(limitMax))
+                    .color(GRAY)
+                    .decoration(TextDecoration.ITALIC, State.FALSE)
                     .build();
 
     private Messages() {
