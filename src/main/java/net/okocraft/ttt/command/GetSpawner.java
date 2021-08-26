@@ -43,7 +43,7 @@ public class GetSpawner extends AbstractCommand {
 
         EntityType type;
         try {
-            type = EntityType.valueOf(args[1]);
+            type = EntityType.valueOf(args[1].toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
             sender.sendMessage(Messages.COMMAND_INVALID_ENTITY_TYPE);
             return;
