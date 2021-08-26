@@ -1,4 +1,4 @@
-package net.okocraft.ttt.worldguard;
+package net.okocraft.ttt.bridge.worldguard;
 
 import org.bukkit.entity.Player;
 

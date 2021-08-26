@@ -1,4 +1,4 @@
-package net.okocraft.ttt.worldguard;
+package net.okocraft.ttt.bridge.worldguard;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.WorldGuard;

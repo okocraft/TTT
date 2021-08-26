@@ -4,6 +4,9 @@ import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
+import net.okocraft.ttt.bridge.worldguard.WorldGuardAPI;
+import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
+import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
 
@@ -53,6 +56,8 @@ public class TTT extends JavaPlugin implements Listener {
             TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
 
     private final SpawnerUtil spawnerUtil = new SpawnerUtil(this);
+    
+    private WorldGuardAPI worldGuardAPI;
 
     @Override
     public void onLoad() {
@@ -83,6 +88,12 @@ public class TTT extends JavaPlugin implements Listener {
 
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new SpawnerListener(this), this);
+
+        try {
+            worldGuardAPI = new WorldGuardAPIImpl();
+        } catch (NoClassDefFoundError e) {
+            worldGuardAPI = new WorldGuardAPIVoid();
+        }
     }
 
     @Override
@@ -140,5 +151,9 @@ public class TTT extends JavaPlugin implements Listener {
 
     public SpawnerUtil getSpawnerUtil() {
         return spawnerUtil;
+    }
+
+    public WorldGuardAPI getWorldGuardAPI() {
+        return worldGuardAPI;
     }
 }
