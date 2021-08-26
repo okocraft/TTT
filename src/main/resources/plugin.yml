@@ -9,3 +9,11 @@ softdepend:
 commands:
   ttt:
     description: Main command of this plugin.
+
+permissions:
+  ttt.command.getspawner:
+    description: Permission for /ttt getspawner subcommand.
+    default: op
+  ttt.bypass.changespawner:
+    description: Permission to bypass changing mob spawner with spawn egg.
+    default: op

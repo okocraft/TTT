@@ -1,31 +1,113 @@
 package net.okocraft.ttt;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+
+import com.github.siroshun09.configapi.api.Configuration;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import net.kyori.adventure.translation.GlobalTranslator;
+import net.okocraft.ttt.config.Messages;
+import net.okocraft.ttt.config.Settings;
+
 public final class SpawnerUtil {
 
     private final TTT plugin;
+    private final Configuration config;
     private final NamespacedKey entityKey;
+    private final NamespacedKey spawnableMobsKey;
     
     SpawnerUtil(TTT plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfiguration();
         this.entityKey = NamespacedKey.fromString("entity", plugin);
+        this.spawnableMobsKey = NamespacedKey.fromString("spawnablemobs", plugin);
+    }
+
+    public NamespacedKey getSpawnableMobsKey() {
+        return spawnableMobsKey;
+    }
+
+    public void copyDataFromItem(CreatureSpawner spawner, ItemStack spawnerItem, boolean updateState) {
+        if (spawnerItem.getType() != Material.SPAWNER) {
+            return;
+        }
+
+        if (hasSpawnableMobsData(spawnerItem)) {
+            setSpawnableMobs(spawner, getSpawnableMobs(spawnerItem));
+        } else {
+            setSpawnableMobs(spawner, getDefaultSpawnableMobs(spawner.getSpawnedType()));
+        }
+                
+        Optional<EntityType> typeOpt = getEntityTypeFrom(spawnerItem);
+        if (typeOpt.isPresent()) {
+            spawner.setSpawnedType(typeOpt.get());
+        } else {
+            plugin.getLogger().warning("Illegal entity type spawner is placed at: " + spawner.getLocation());
+            return;
+        }
+
+        if (updateState) {
+            spawner.update();
+        }
+    }
+
+    public ItemStack getSpawnerItemFrom(CreatureSpawner spawner, Locale locale) {
+        return createSpawner(spawner.getSpawnedType(), getSpawnableMobs(spawner), locale);
     }
 
     public ItemStack createSpawner(EntityType type) {
+        return createSpawner(type, Locale.US);
+    }
+
+    public ItemStack createSpawner(EntityType type, Locale locale) {
+        return createSpawner(type, getDefaultSpawnableMobs(type), locale);
+    }
+    
+    public int getDefaultSpawnableMobs(EntityType type) {
+        Map<String, Integer> maxSpawnableMobs = plugin.getConfiguration().get(Settings.SPAWNER_TOTAL_SPAWNABLE_MOBS);
+        return maxSpawnableMobs.getOrDefault(type.name(), maxSpawnableMobs.getOrDefault("DEFAULT", 5000));
+    }
+
+    public ItemStack createSpawner(EntityType type, int spawnableMobs, Locale locale) {
         ItemStack spawner = new ItemStack(Material.SPAWNER);
-        ItemMeta meta = spawner.getItemMeta();
-        meta.getPersistentDataContainer().set(entityKey, PersistentDataType.STRING, type.name());
-        // spawner.getItemMeta().displayName(null); // TODO: message config value like "{0} spawner".repalceAll({0}, mobname);
-        spawner.setItemMeta(meta);
+        setEntityType(spawner, type);
+        setSpawnableMobs(spawner, spawnableMobs);
+        changeLocale(spawner, locale);
+
         return spawner;
+    }
+
+    public void setEntityType(ItemStack spawnerItem, EntityType type) {
+        if (spawnerItem.getType() == Material.SPAWNER) {
+            ItemMeta meta = spawnerItem.getItemMeta();
+            meta.getPersistentDataContainer().set(entityKey, PersistentDataType.STRING, type.name());
+            spawnerItem.setItemMeta(meta);
+        }
+    }
+
+    public void changeLocale(ItemStack spawner, Locale locale) {
+        if (spawner.getType() == Material.SPAWNER) {
+            return;
+        }
+
+        EntityType type = getEntityTypeFrom(spawner).orElse(EntityType.PIG);
+        
+        ItemMeta meta = spawner.getItemMeta();
+        spawner.getItemMeta().displayName(GlobalTranslator.render(Messages.SPAWNER_DISPLAY_NAME.apply(type), locale));
+        // TODO: Messages lore list component getter plzzzz.
+        
+        spawner.setItemMeta(meta);
     }
 
     public Optional<EntityType> getEntityTypeFrom(ItemStack spawner) {
@@ -44,5 +126,73 @@ public final class SpawnerUtil {
         } catch(IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    public boolean hasSpawnableMobsData(ItemStack spawner) {
+        if (spawner.getType() == Material.SPAWNER) {
+            return spawner.getItemMeta().getPersistentDataContainer().has(spawnableMobsKey, PersistentDataType.INTEGER);
+        } else {
+            return false;
+        }
+    }
+
+    public int getSpawnableMobs(ItemStack spawner) {
+        if (spawner.getType() == Material.SPAWNER) {
+            return spawner.getItemMeta().getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 5000);
+        } else {
+            return 0;
+        }
+    }
+
+    public void setSpawnableMobs(ItemStack spawner, int limit) {
+        if (spawner.getType() != Material.SPAWNER) {
+            return;
+        }
+        ItemMeta meta = spawner.getItemMeta();
+        meta.getPersistentDataContainer().set(spawnableMobsKey, PersistentDataType.INTEGER, limit);
+        spawner.setItemMeta(meta);
+    }
+
+    public void decrementSpawnableMobs(ItemStack spawner) {
+        setSpawnableMobs(spawner, getSpawnableMobs(spawner) - 1);
+    }
+
+    public void incrementSpawnableMobs(ItemStack spawner) {
+        setSpawnableMobs(spawner, getSpawnableMobs(spawner) + 1);
+    }
+
+    public int getSpawnableMobs(CreatureSpawner spawner) {
+        return spawner.getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 5000);
+    }
+
+    public void setSpawnableMobs(CreatureSpawner spawner, int limit) {
+        spawner.getPersistentDataContainer().set(spawnableMobsKey, PersistentDataType.INTEGER, limit);
+    }
+
+    public void decrementSpawnableMobs(CreatureSpawner spawner) {
+        setSpawnableMobs(spawner, getSpawnableMobs(spawner) - 1);
+    }
+
+    public void incrementSpawnableMobs(CreatureSpawner spawner) {
+        setSpawnableMobs(spawner, getSpawnableMobs(spawner) + 1);
+    }
+
+    public boolean isRunning(CreatureSpawner spawner) {
+        return !config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS)
+                .contains(spawner.getWorld().getName())
+                || isBlockPowered(spawner.getBlock()) != config
+                        .get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE);
+    }
+
+    private boolean isBlockPowered(Block block) {
+        for (BlockFace face : BlockFace.values()) {
+            if (face.isCartesian()) {
+                if (block.isBlockFacePowered(face) || block.isBlockFaceIndirectlyPowered(face)) {
+                    return true;
+                }
+            }
+        }
+
+        return block.isBlockPowered() || block.isBlockIndirectlyPowered();
     }
 }
