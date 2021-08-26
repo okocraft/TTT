@@ -3,9 +3,9 @@ spawner:
   unbreakable:
     # breaking "mob-type" spawner by players will be cancelled.
     mob-types:
-      - ALL
-      # - CREEPER
-      # - ZOMBIE
+      # - ALL
+      - CREEPER
+      - ZOMBIE
 
   ### Done
   # Drop spawner when players break it.
@@ -22,13 +22,20 @@ spawner:
     radius: 34
     amount: 2
   
-  stopped-by-redstone-signal: true
+  stopped-by-redstone-signal:
+    # If reverse is true, spawners stop spawning mob when it not powered.
+    reverse: false
+    enabled-worlds:
+    #- ALL
+    - resource
+
 
   # Spawn egg cannot change spawner.
   cancel-changing-mob: true
 
-  max-total-mobs:
-    zombie: 5000
+  total-spawnable-mobs:
+    DEFAULT: 5000
+    ZOMBIE: 5000
 
 # Stack mobs.
 mob-stacker:
