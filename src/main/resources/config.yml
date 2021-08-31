@@ -1,5 +1,4 @@
 spawner:
-  ### Done
   unbreakable:
     # breaking "mob-type" spawner by players will be cancelled.
     mob-types:
@@ -7,14 +6,49 @@ spawner:
       - CREEPER
       - ZOMBIE
 
-  ### Done
   # Drop spawner when players break it.
   minable:
     enabled: true
     # It needs silktouch to drop spawner.
     needs-silktouch: false
 
-  ### Done
+  mine-limiter:
+    limiter1: # can define unlimited amount of limiters.
+      world: resource
+      mob-type: ZOMBIE
+      amount: 1
+      action: CANCEL # or NO_DROP
+    limiter2:
+      world: resource
+      mob-type: SKELETON
+      amount: 1
+      action: CANCEL
+    limiter3:
+      world: resource
+      mob-type: SPIDER
+      amount: 1
+      action: CANCEL
+    limiter4:
+      world: resource
+      mob-type: CAVE_SPIDER
+      amount: 1
+      action: CANCEL
+    limiter5:
+      world: resource
+      mob-type: SILVERFISH
+      amount: 1
+      action: CANCEL
+    limiter6:
+      world: resource_nether
+      mob-type: BLAZE
+      amount: 1
+      action: CANCEL
+    limiter7:
+      world: resource_nether
+      mob-type: MAGMA_CUBE
+      amount: 1
+      action: CANCEL
+
   # Limits spanwer amount in specific radius (circle)
   # Only player placement will be affected.
   isolating:

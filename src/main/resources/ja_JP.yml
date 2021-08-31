@@ -8,6 +8,8 @@ spawner-start-tip: "スポナーにレッドストーン動力を与えるとス
 spawner-start-tip-reverse: "スポナーにレッドストーン動力を与えるとスポナーを起動できます。"
 cannot-change-spawner: "スポナーの中のモブを変更することはできません。"
 too-many-spawners: "スポナーの数が多すぎます。半径{0}ブロックにつき{1}個までしか設置できません。"
+player-not-found: "プレイヤーが見つかりませんでした。"
+player-limit-reset: "プレイヤーのスポナー採掘数のデータがリセットされました。"
 
 command:
   no-permission: "権限がありません。"

@@ -38,6 +38,7 @@ import java.util.logging.Level;
  * * クリックボットの禁止（interacteventでやると長押しも判定されるのでダメ）
  * 
  * 追加済み
+ * * 採掘可能スポナー数の制限
  * * 総湧き数制限機能
  * * silkspawnerのような機能
  * * spawner eggで中身を変えるかどうかの権限
@@ -51,6 +52,9 @@ public class TTT extends JavaPlugin implements Listener {
 
     private final YamlConfiguration configuration =
             YamlConfiguration.create(pluginDirectory.resolve("config.yml"));
+
+    private final YamlConfiguration playerData =
+            YamlConfiguration.create(pluginDirectory.resolve("playerdata.yml"));
 
     private final TranslationDirectory translationDirectory =
             TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
@@ -66,6 +70,13 @@ public class TTT extends JavaPlugin implements Listener {
             configuration.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+        }
+
+        try {
+            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", configuration.getPath());
+            configuration.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load playerdata.yml", e);
         }
 
         translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
@@ -103,6 +114,10 @@ public class TTT extends JavaPlugin implements Listener {
 
     public @NotNull YamlConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public @NotNull YamlConfiguration getPlayerData() {
+        return playerData;
     }
 
     public @NotNull Path getPluginDirectory() {

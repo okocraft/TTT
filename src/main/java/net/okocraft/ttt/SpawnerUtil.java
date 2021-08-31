@@ -17,6 +17,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -225,5 +226,45 @@ public final class SpawnerUtil {
             }
         }
         return result;
+    }
+
+    public LimitActions checkMineSpawner(Player player, CreatureSpawner spawner) {
+        if (hasSpawnableMobsData(spawner)) {
+            return LimitActions.ALLOW;
+        }
+
+        String worldName = spawner.getWorld().getName();
+        String mobTypeName = spawner.getSpawnedType().name();
+        int minedAmount = plugin.getPlayerData()
+                .getInteger(player.getUniqueId().toString() + "." + worldName + "." + mobTypeName);
+
+        Configuration section = config.getSection("spawner.mine-limiter");
+        if (section == null) {
+            return LimitActions.ALLOW;
+        }
+
+        for (String limiterName : config.getKeyList()) {
+            if (!section.getString(limiterName + ".world").equalsIgnoreCase(worldName)) {
+                continue;
+            }
+
+            if (!section.getString(limiterName + ".mob-type").equalsIgnoreCase(mobTypeName)) {
+                continue;
+            }
+
+            if (section.getInteger(limiterName + ".amount") >= minedAmount) {
+                try {
+                    return LimitActions.valueOf(section.getString(limiterName + ".action", "CANCEL"));
+                } catch (IllegalArgumentException e) {
+                    return LimitActions.CANCEL;
+                }
+            }
+        }
+
+        return LimitActions.ALLOW;
+    }
+
+    public enum LimitActions {
+        CANCEL, NO_DROP, ALLOW;
     }
 }

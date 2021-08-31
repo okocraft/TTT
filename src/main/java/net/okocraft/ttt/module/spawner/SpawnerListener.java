@@ -32,6 +32,7 @@ import org.bukkit.inventory.meta.SpawnEggMeta;
 
 import net.okocraft.ttt.SpawnerUtil;
 import net.okocraft.ttt.TTT;
+import net.okocraft.ttt.SpawnerUtil.LimitActions;
 import net.okocraft.ttt.config.Messages;
 import net.okocraft.ttt.config.Settings;
 
@@ -82,6 +83,14 @@ public class SpawnerListener implements Listener {
 
         // flag
         // TODO: implement
+
+        LimitActions limitAction = spawnerUtil.checkMineSpawner(event.getPlayer(), state);
+        if (limitAction == LimitActions.CANCEL) {
+            event.setCancelled(true);
+            return;
+        } else if (limitAction == LimitActions.NO_DROP) {
+            return;
+        }
 
         // mineable
         if (config.get(Settings.SPAWNER_MINABLE_ENABLED) && event.getPlayer().getGameMode() != GameMode.CREATIVE) {

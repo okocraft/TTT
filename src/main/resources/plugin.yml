@@ -14,6 +14,9 @@ permissions:
   ttt.command.getspawner:
     description: Permission for /ttt getspawner subcommand.
     default: op
+  ttt.command.resetlimit:
+    description: Permission for /ttt resetlimit subcommand.
+    default: op
   ttt.command.near:
     description: Permission for /ttt near subcommand.
     default: true

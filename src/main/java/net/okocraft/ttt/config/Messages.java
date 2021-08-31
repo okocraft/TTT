@@ -87,6 +87,12 @@ public final class Messages {
     public static final Component CANNOT_CHANGE_SPAWNER =
             PREFIX.toBuilder().append(translatable("cannot-change-spawner", GRAY)).build();
 
+    public static final Component PLAYER_NOT_FOUND =
+            PREFIX.toBuilder().append(translatable("player-not-found", RED)).build();
+
+    public static final Component PLAYER_LIMIT_RESET =
+            PREFIX.toBuilder().append(translatable("player-limit-reset", GRAY)).build();
+
     public static final Function<EntityType, Component> SPAWNER_DISPLAY_NAME =
             entityType -> translatable()
                     .key("spawner-item.display-name")
