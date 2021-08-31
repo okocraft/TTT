@@ -136,6 +136,10 @@ public final class SpawnerUtil {
         }
     }
 
+    public boolean hasSpawnableMobsData(CreatureSpawner spawner) {
+        return spawner.getPersistentDataContainer().has(spawnableMobsKey, PersistentDataType.INTEGER);
+    }
+
     public boolean hasSpawnableMobsData(ItemStack spawner) {
         if (spawner.getType() == Material.SPAWNER) {
             return spawner.getItemMeta().getPersistentDataContainer().has(spawnableMobsKey, PersistentDataType.INTEGER);

@@ -181,6 +181,10 @@ public class SpawnerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onSpawnerSpawnedMob(SpawnerSpawnEvent event) {
         CreatureSpawner spawner = event.getSpawner();
+        if (!spawnerUtil.hasSpawnableMobsData(spawner)) {
+            return;
+        }
+
         if (!spawnerUtil.isRunning(spawner)) {
             event.setCancelled(true);
             return;
