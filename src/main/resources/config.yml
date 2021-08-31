@@ -34,8 +34,8 @@ spawner:
   cancel-changing-mob: true
 
   total-spawnable-mobs:
-    DEFAULT: 5000
-    ZOMBIE: 5000
+    DEFAULT: 100000
+    ZOMBIE: 100000
 
 # Stack mobs.
 mob-stacker:

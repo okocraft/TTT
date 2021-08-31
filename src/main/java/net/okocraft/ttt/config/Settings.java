@@ -44,7 +44,7 @@ public final class Settings {
     public static final ConfigValue<Map<String, Integer>> SPAWNER_TOTAL_SPAWNABLE_MOBS =
             config -> {
                 Map<String, Integer> result = new HashMap<>();
-                result.put("DEFAULT", 5000);
+                result.put("DEFAULT", 100000);
                 Configuration totalSpawnableMobs = config.getSection("spawner.total-spawnable-mobs");
                 if (totalSpawnableMobs == null) {
                     return result;
