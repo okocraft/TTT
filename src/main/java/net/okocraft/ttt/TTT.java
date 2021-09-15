@@ -150,10 +150,10 @@ public class TTT extends JavaPlugin implements Listener {
 
     @EventHandler
     private void onEntityDeath(EntityDeathEvent event) {
-        if (!(event.getEntity() instanceof Mob)) {
+        if (!(event.getEntity() instanceof Mob entity)) {
             return;
         }
-        if (event.getEntity().getLastDamageCause().getCause() == DamageCause.CRAMMING) {
+        if (entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
             event.setDroppedExp(0);
             event.getDrops().clear();
         }
