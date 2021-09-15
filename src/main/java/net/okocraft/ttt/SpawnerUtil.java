@@ -82,7 +82,7 @@ public final class SpawnerUtil {
     
     public int getDefaultSpawnableMobs(EntityType type) {
         Map<String, Integer> maxSpawnableMobs = plugin.getConfiguration().get(Settings.SPAWNER_TOTAL_SPAWNABLE_MOBS);
-        return maxSpawnableMobs.getOrDefault(type.name(), maxSpawnableMobs.getOrDefault("DEFAULT", 5000));
+        return maxSpawnableMobs.getOrDefault(type.name(), maxSpawnableMobs.getOrDefault("DEFAULT", 100000));
     }
 
     public ItemStack createSpawner(EntityType type, int spawnableMobs, Locale locale) {
@@ -151,7 +151,7 @@ public final class SpawnerUtil {
 
     public int getSpawnableMobs(ItemStack spawner) {
         if (spawner.getType() == Material.SPAWNER) {
-            return spawner.getItemMeta().getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 5000);
+            return spawner.getItemMeta().getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 100000);
         } else {
             return 0;
         }
@@ -175,7 +175,7 @@ public final class SpawnerUtil {
     }
 
     public int getSpawnableMobs(CreatureSpawner spawner) {
-        return spawner.getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 5000);
+        return spawner.getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, 100000);
     }
 
     public void setSpawnableMobs(CreatureSpawner spawner, int limit) {
