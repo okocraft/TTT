@@ -23,3 +23,6 @@ permissions:
   ttt.bypass.changespawner:
     description: Permission to bypass changing mob spawner with spawn egg.
     default: op
+  ttt.bypass.unplaceable:
+    description: Permission to bypass placing spawner in spawner unplaceable worlds.
+    default: op

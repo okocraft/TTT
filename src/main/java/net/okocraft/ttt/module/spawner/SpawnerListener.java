@@ -11,6 +11,8 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
@@ -29,6 +31,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import net.okocraft.ttt.SpawnerUtil;
 import net.okocraft.ttt.TTT;
@@ -48,6 +51,15 @@ public class SpawnerListener implements Listener {
         this.config = plugin.getConfiguration();
     }
 
+    private boolean canPlaceSpawner(World world) {
+        for (String worldName : config.get(Settings.SPAWNER_UNPLACEABLE_WORLDS)) {
+            if (world.getName().equalsIgnoreCase(worldName)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @EventHandler(ignoreCancelled = true)
     private void onSpawnerBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
@@ -55,6 +67,15 @@ public class SpawnerListener implements Listener {
             return;
         }
         CreatureSpawner state = (CreatureSpawner) block.getState();
+
+        if (canPlaceSpawner(state.getWorld())) {
+            PersistentDataContainer container = state.getPersistentDataContainer();
+            for (NamespacedKey key : container.getKeys()) {
+                if (key.getNamespace().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
+                    container.remove(key);
+                }
+            }
+        }
 
         // unbreakable
         if (!event.getPlayer().hasPermission("ttt.bypass.unbreakable")) {
@@ -107,7 +128,13 @@ public class SpawnerListener implements Listener {
     private void onSpawnerPlace(BlockPlaceEvent event) {
         Block placed = event.getBlockPlaced();
         ItemStack spawnerItem = event.getItemInHand();
-        if (placed.getType() != Material.SPAWNER || spawnerItem.getType() != Material.SPAWNER) {
+
+        if (!event.getPlayer().hasPermission("ttt.bypass.unplaceable") && placed.getType() == Material.SPAWNER && canPlaceSpawner(placed.getWorld())) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (placed.getType() != Material.SPAWNER || !spawnerUtil.hasSpawnableMobsData(spawnerItem)) {
             return;
         }
 
@@ -155,6 +182,9 @@ public class SpawnerListener implements Listener {
         }
 
         CreatureSpawner spawner = (CreatureSpawner) block.getState();
+        if (!spawnerUtil.hasSpawnableMobsData(spawner) || canPlaceSpawner(spawner.getWorld())) {
+            return;
+        }
 
         event.getPlayer().sendMessage(Messages.SHOWN_SPAWNER_STATUS.apply(
                 spawnerUtil.isRunning(spawner),
@@ -190,7 +220,7 @@ public class SpawnerListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onSpawnerSpawnedMob(SpawnerSpawnEvent event) {
         CreatureSpawner spawner = event.getSpawner();
-        if (!spawnerUtil.hasSpawnableMobsData(spawner)) {
+        if (!spawnerUtil.hasSpawnableMobsData(spawner) || canPlaceSpawner(spawner.getWorld())) {
             return;
         }
 

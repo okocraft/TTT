@@ -59,6 +59,9 @@ public final class Settings {
                 return result;
             };
 
+    public static final ConfigValue<List<String>> SPAWNER_UNPLACEABLE_WORLDS =
+            config -> config.getStringList("spawner-unplaceable-worlds");
+
     public static final ConfigValue<Boolean> MOB_STACKER_ENABLED =
             config -> config.getBoolean("mob-stacker.enabled");
 

@@ -63,6 +63,15 @@ spawner:
     #- ALL
     - resource
 
+  # In unplaceable world, you cannot place it unless you have perm "ttt.bypass.unplaceable"
+  # All spawners in unplaceable world are treated like they do not have any data of this plugin,
+  # even if spawner actually have the data.
+  # Means, spawners with data will lost its data when the spawner is broken
+  # if the world is specified below.
+  spawner-unplaceable-worlds:
+    - resource
+    - resource_nether
+    - resource_the_end
 
   # Spawn egg cannot change spawner.
   cancel-changing-mob: true
