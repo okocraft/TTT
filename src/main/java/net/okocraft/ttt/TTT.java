@@ -9,9 +9,8 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
+import net.okocraft.ttt.database.Database;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Mob;
 import org.bukkit.event.EventHandler;
@@ -25,6 +24,7 @@ import java.util.Optional;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.logging.Level;
 
@@ -34,10 +34,10 @@ import java.util.logging.Level;
  * * mobstackerの機能
  * * スポナー使用権機能(使用権のあるプレイヤーのみ攻撃でき、ドロップアイテムを拾える)
  * * wg保護内部でスポナーのモブのみを制限するフラグ
- * * モブの湧き数制限
  * * クリックボットの禁止（interacteventでやると長押しも判定されるのでダメ）
  * 
  * 追加済み
+ * * モブの湧き数制限
  * * 採掘可能スポナー数の制限
  * * 総湧き数制限機能
  * * silkspawnerのような機能
@@ -59,7 +59,9 @@ public class TTT extends JavaPlugin implements Listener {
     private final TranslationDirectory translationDirectory =
             TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
 
-    private final SpawnerUtil spawnerUtil = new SpawnerUtil(this);
+    private Database database;
+
+    private SpawnerUtil spawnerUtil;
     
     private WorldGuardAPI worldGuardAPI;
 
@@ -87,6 +89,14 @@ public class TTT extends JavaPlugin implements Listener {
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load language files.", e);
         }
+
+        try {
+            this.database = new Database(this);
+        } catch (SQLException e) {
+            getLogger().log(Level.SEVERE, "Cound not initialize database.", e);
+        }
+
+        this.spawnerUtil = new SpawnerUtil(this);
     }
 
     @Override
@@ -142,12 +152,6 @@ public class TTT extends JavaPlugin implements Listener {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
-            @NotNull String[] args) {
-        return true;
-    }
-
     @EventHandler
     private void onEntityDeath(EntityDeathEvent event) {
         if (!(event.getEntity() instanceof Mob entity)) {
@@ -162,6 +166,10 @@ public class TTT extends JavaPlugin implements Listener {
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
         var japanese = "ja_JP.yml";
         ResourceUtils.copyFromJar(getFile().toPath(), "ja_JP.yml", directory.resolve(japanese));
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public SpawnerUtil getSpawnerUtil() {

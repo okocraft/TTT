@@ -5,8 +5,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
+import net.okocraft.ttt.util.Functions.QuadFunction;
 
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -111,29 +111,5 @@ public final class Messages {
 
     private Messages() {
         throw new UnsupportedOperationException();
-    }
-
-    @FunctionalInterface
-    public interface TriFunction<A,B,C,R> {
-
-        R apply(A a, B b, C c);
-    
-        default <V> TriFunction<A, B, C, V> andThen(
-                                    Function<? super R, ? extends V> after) {
-            Objects.requireNonNull(after);
-            return (A a, B b, C c) -> after.apply(apply(a, b, c));
-        }
-    }
-
-    @FunctionalInterface
-    public interface QuadFunction<A,B,C,D,R> {
-
-        R apply(A a, B b, C c, D d);
-    
-        default <V> QuadFunction<A, B, C, D, V> andThen(
-                                    Function<? super R, ? extends V> after) {
-            Objects.requireNonNull(after);
-            return (A a, B b, C c, D d) -> after.apply(apply(a, b, c, d));
-        }
     }
 }
