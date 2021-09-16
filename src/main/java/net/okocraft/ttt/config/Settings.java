@@ -69,10 +69,10 @@ public final class Settings {
             config -> config.getBoolean("mob-stacker.target-spawn-reason");
 
     public static final ConfigValue<Boolean> FIND_TRAPS_ENABLED =
-            config -> config.getBoolean("find-traps.enabled");
+            config -> config.getBoolean("find-farms.enabled");
 
     public static final ConfigValue<List<String>> FIND_TRAPS_CHECK_SPAWN_REASON =
-            config -> config.getStringList("find-traps.check-spawn-reason");
+            config -> config.getStringList("find-farms.check-spawn-reason");
 
     public static final ConfigValue<Boolean> ANTI_CLICKBOT_ENABLED =
             config -> config.getBoolean("anti-clickbot.enabled");

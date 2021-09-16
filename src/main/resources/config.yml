@@ -88,15 +88,32 @@ mob-stacker:
 
 # Find mob farms.
 # If spawn reason includes BLEEDING,
-# you can also find normal farm that is not traps.
-find-traps:
+# you can also find normal farm which is not grinder.
+find-farms:
   enabled: true
   check-spawn-reason:
     - SPAWNER
     - NATURAL
     - SLIME_SPLIT
     - RAID
-
+  max-spawn-area-range: 128
+  killing-chumber-range: 2
+  # Killed mob amount to consider the location as killing-chumber in the range specified above.
+  mob-amount-of-killing-chumber: 30
+  farm-actions:
+    SPAWNER: []
+    NATURAL:
+      - CLEAR_DROP
+      - CLEAR_EXP
+      - NOTIFY
+    SLIME_SPLIT:
+      - CLEAR_DROP
+      - CLEAR_EXP
+      - NOTIFY
+    RAID:
+      - CLEAR_DROP
+      - CLEAR_EXP
+      - NOTIFY
 
 anti-clickbot:
   enabled: true
