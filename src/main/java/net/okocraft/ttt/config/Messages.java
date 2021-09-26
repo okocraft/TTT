@@ -3,9 +3,13 @@ package net.okocraft.ttt.config;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.format.TextDecoration.State;
-import net.okocraft.ttt.util.Functions.QuadFunction;
+import net.okocraft.ttt.module.farm.EntityDeathLogTable.LogEntity;
+import net.okocraft.ttt.module.spawner.SpawnerItem;
+import net.okocraft.ttt.module.spawner.SpawnerState;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -63,16 +67,16 @@ public final class Messages {
                     )
                     .build();
 
-    public static final QuadFunction<Boolean, EntityType, Integer, Integer, Component> SHOWN_SPAWNER_STATUS =
-            (running, type, limit, maxLimit) -> PREFIX.toBuilder()
+    public static final Function<SpawnerState, Component> SHOWN_SPAWNER_STATUS =
+            spawner -> PREFIX.toBuilder()
                     .append(
                             translatable()
                                     .key("shown-spawner-status")
                                     .args(
-                                            text(running, AQUA),
-                                            translatable(type, AQUA),
-                                            text(limit, AQUA),
-                                            text(maxLimit, AQUA))
+                                            text(spawner.isRunning(), AQUA),
+                                            translatable(spawner.getSpawnedType(), AQUA),
+                                            text(spawner.getSpawnableMobs(), AQUA),
+                                            text(spawner.getMaxSpawnableMobs(), AQUA))
                                     .color(GRAY)
                                     .build()
                     )
@@ -116,10 +120,10 @@ public final class Messages {
                     .hoverEvent(HoverEvent.showText(text("/tp " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation())))
                     .build();
 
-    public static final BiFunction<Integer, Integer, Component> SPAWNER_LORE =
-            (limit, limitMax) -> translatable()
+    public static final Function<SpawnerItem, Component> SPAWNER_LORE =
+            spawner -> translatable()
                     .key("spawner-item.lore")
-                    .args(text(limit), text(limitMax))
+                    .args(text(spawner.getSpawnableMobs()), text(spawner.getMaxSpawnableMobs()))
                     .color(GRAY)
                     .decoration(TextDecoration.ITALIC, State.FALSE)
                     .build();

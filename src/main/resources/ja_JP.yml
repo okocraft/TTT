@@ -11,6 +11,8 @@ too-many-spawners: "スポナーの数が多すぎます。半径{0}ブロック
 player-not-found: "プレイヤーが見つかりませんでした。"
 player-limit-reset: "プレイヤーのスポナー採掘数のデータがリセットされました。"
 
+farm-is-detected: "{0}のモブファームが{1}で発見されました。"
+
 command:
   no-permission: "権限がありません。"
   not-enough-arguments: "引数が足りません。"

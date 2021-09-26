@@ -11,18 +11,49 @@ commands:
     description: Main command of this plugin.
 
 permissions:
-  ttt.command.getspawner:
-    description: Permission for /ttt getspawner subcommand.
-    default: op
-  ttt.command.resetlimit:
-    description: Permission for /ttt resetlimit subcommand.
-    default: op
-  ttt.command.near:
-    description: Permission for /ttt near subcommand.
+  ttt.spawner.break.*:
+    description: Permission for breaking spawners.
     default: true
-  ttt.bypass.changespawner:
-    description: Permission to bypass changing mob spawner with spawn egg.
+  ttt.spawner.drop.*:
+    description: Permission for dropping spawners on break.
+    default: true
+  ttt.spawner.drop.withoutsilktouch:
+    description: Permission for dropping spawners without silk touch.
+    default: true
+  ttt.spawner.place.*:
+    description: Permission for placing spawners.
+    default: true
+  ttt.spawner.change.*:
+    description: Permission for changing spawner mob type with spawn eggs. Note that non op and creative cannot spawners constantly.
     default: op
-  ttt.bypass.unplaceable:
-    description: Permission to bypass placing spawner in spawner unplaceable worlds.
+  ttt.spawner.showstatus:
+    description: Permission for showing status of the spawner when it's clicked.
+    default: true
+
+  ttt.command:
+    description: Permission for `/ttt command`.
+    default: true
+
+  ttt.command.spawner:
+    description: Permission for `/ttt spawner` command.
+    default: true
+  ttt.command.spawner.near:
+    description: Permission for `/ttt spawner near` command.
+    default: true
+  ttt.command.spawner.get:
+    description: Permission for `/ttt spawner get` command.
+    default: op
+  ttt.command.spawner.resetlimit:
+    description: Permission for `/ttt spawner resetlimit` command.
+    default: op
+  ttt.command.spawner.modify:
+    description: Permission for `/ttt spawner modify` command.
+    default: op
+
+  ttt.command.farms:
+    description: Permission for `/ttt farms` command.
+    default: op
+
+  ttt.notification.farmfound:
+    description: Permission to receive find-farm message.
     default: op

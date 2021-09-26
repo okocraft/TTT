@@ -1,5 +1,6 @@
 package net.okocraft.ttt.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -8,20 +9,19 @@ import java.util.Map;
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.value.ConfigValue;
 
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import net.okocraft.ttt.config.enums.FindFarmsAction;
+
 public final class Settings {
 
     private Settings() {
         throw new UnsupportedOperationException();
     }
-
-    public static final ConfigValue<List<String>> SPAWNER_UNBREAKING_MOB_TYPES =
-            config -> config.getStringList("spawner.unbreakable.mob-types");
-
-    public static final ConfigValue<Boolean> SPAWNER_MINABLE_ENABLED =
-            config -> config.getBoolean("spawner.minable.enabled");
-
-    public static final ConfigValue<Boolean> SPAWNER_MINABLE_NEEDS_SILKTOUCH =
-            config -> config.getBoolean("spawner.minable.needs-silktouch");
 
     public static final ConfigValue<Boolean> SPAWNER_ISOLATING_ENABLED =
             config -> config.getBoolean("spawner.isolating.enabled");
@@ -37,27 +37,42 @@ public final class Settings {
 
     public static final ConfigValue<List<String>> SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS =
             config -> config.getStringList("spawner.stopped-by-redstone-signal.enabled-worlds");
+    
+    // TODO: move
+    @NotNull
+    @SuppressWarnings("unchecked")
+    private static <T> T getPerWorldPerEntityTypeValue(@NotNull Configuration config, @NotNull String rootKey, @Nullable World world, @Nullable EntityType entityType, @NotNull T def) {
+        Configuration worldSection = null;
+        if (world != null) {
+            worldSection = config.getSection(rootKey + "." + world.getName());
+        }
+        if (worldSection == null) {
+            worldSection = config.getSection(rootKey + ".default");
+            if (worldSection == null) {
+                return def;
+            }
+        }
 
-    public static final ConfigValue<Boolean> SPAWNER_CANCEL_CHANGING_MOB =
-            config -> config.getBoolean("spawner.cancel-changing-mob");
+        try {
+            if (entityType == null) {
+                return (T) worldSection.get("DEFAULT", def);
+            } else {
+                return (T) worldSection.get(entityType.name(), worldSection.get("DEFAULT", def));
+            }
+        } catch (ClassCastException e) {
+            return def;
+        }
+    }
 
-    public static final ConfigValue<Map<String, Integer>> SPAWNER_TOTAL_SPAWNABLE_MOBS =
-            config -> {
-                Map<String, Integer> result = new HashMap<>();
-                result.put("DEFAULT", 100000);
-                Configuration totalSpawnableMobs = config.getSection("spawner.total-spawnable-mobs");
-                if (totalSpawnableMobs == null) {
-                    return result;
-                }
-                for (String key : totalSpawnableMobs.getKeyList()) {
-                    try {
-                        result.put(key.toUpperCase(Locale.ROOT), totalSpawnableMobs.getInteger(key.toUpperCase(Locale.ROOT)));
-                    } catch (IllegalArgumentException ignored) {
-                    }
-                }
-
-                return result;
-            };
+    // TODO: move
+    public static int getMaxSpawnableMobs(@NotNull Configuration config, @Nullable World world, @Nullable EntityType entityType) {
+        return getPerWorldPerEntityTypeValue(config, "spawner.max-spawnable-mobs", world, entityType, 100000);
+    }
+    
+    // TODO: move
+    public static int getMaxMinableSpawners(@NotNull Configuration config, @Nullable World world, @Nullable EntityType entityType) {
+        return getPerWorldPerEntityTypeValue(config, "spawner.max-minable-spawners", world, entityType, 2);
+    }
 
     public static final ConfigValue<List<String>> SPAWNER_UNPLACEABLE_WORLDS =
             config -> config.getStringList("spawner-unplaceable-worlds");

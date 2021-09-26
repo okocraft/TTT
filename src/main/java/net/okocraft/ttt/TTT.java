@@ -9,6 +9,7 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
 import net.okocraft.ttt.module.farm.FarmListener;
+import net.okocraft.ttt.module.spawner.Spawner;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
 import net.okocraft.ttt.database.Database;
 
@@ -57,12 +58,12 @@ public class TTT extends JavaPlugin {
 
     private Database database;
 
-    private SpawnerUtil spawnerUtil;
-    
     private WorldGuardAPI worldGuardAPI;
 
     @Override
     public void onLoad() {
+        Spawner.setPlugin(this);
+
         try {
             ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
             configuration.load();
@@ -91,8 +92,6 @@ public class TTT extends JavaPlugin {
         } catch (SQLException e) {
             getLogger().log(Level.SEVERE, "Cound not initialize database.", e);
         }
-
-        this.spawnerUtil = new SpawnerUtil(this);
     }
 
     @Override
@@ -156,10 +155,6 @@ public class TTT extends JavaPlugin {
 
     public Database getDatabase() {
         return database;
-    }
-
-    public SpawnerUtil getSpawnerUtil() {
-        return spawnerUtil;
     }
 
     public WorldGuardAPI getWorldGuardAPI() {
