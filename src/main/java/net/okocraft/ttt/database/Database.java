@@ -10,8 +10,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import net.okocraft.ttt.TTT;
-import net.okocraft.ttt.util.Functions.SQLConsumer;
-import net.okocraft.ttt.util.Functions.SQLFunction;
 
 public class Database {
 
@@ -146,4 +144,7 @@ public class Database {
             hikari.close();
         }
     }
+
+    @FunctionalInterface public interface SQLConsumer<A> { void accept(A a) throws SQLException; }
+    @FunctionalInterface public interface SQLFunction<A, R> { R apply(A a) throws SQLException; }
 }
