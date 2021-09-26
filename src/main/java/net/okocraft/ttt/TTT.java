@@ -8,15 +8,11 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPI;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
+import net.okocraft.ttt.module.farm.FarmListener;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
 import net.okocraft.ttt.database.Database;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Mob;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +42,7 @@ import java.util.logging.Level;
  * * スポナー保護機能
  * * スポナーの湧き止め機能(レッドストーンのあれ)
  */
-public class TTT extends JavaPlugin implements Listener {
+public class TTT extends JavaPlugin {
 
     private final Path pluginDirectory = getDataFolder().toPath();
 
@@ -107,8 +103,8 @@ public class TTT extends JavaPlugin implements Listener {
 
         TTTCommand.register(this, cmd);
 
-        getServer().getPluginManager().registerEvents(this, this);
         getServer().getPluginManager().registerEvents(new SpawnerListener(this), this);
+        getServer().getPluginManager().registerEvents(new FarmListener(this), this);
 
         try {
             worldGuardAPI = new WorldGuardAPIImpl();
@@ -120,6 +116,7 @@ public class TTT extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         translationDirectory.unload();
+        database.dispose();
     }
 
     public @NotNull YamlConfiguration getConfiguration() {
@@ -150,17 +147,6 @@ public class TTT extends JavaPlugin implements Listener {
     @Override
     public void reloadConfig() {
         throw new UnsupportedOperationException();
-    }
-
-    @EventHandler
-    private void onEntityDeath(EntityDeathEvent event) {
-        if (!(event.getEntity() instanceof Mob entity)) {
-            return;
-        }
-        if (entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
-            event.setDroppedExp(0);
-            event.getDrops().clear();
-        }
     }
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {

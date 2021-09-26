@@ -68,11 +68,30 @@ public final class Settings {
     public static final ConfigValue<Boolean> MOB_STACKER_TARGET_SPAWN_REASON =
             config -> config.getBoolean("mob-stacker.target-spawn-reason");
 
-    public static final ConfigValue<Boolean> FIND_TRAPS_ENABLED =
+    public static final ConfigValue<Boolean> FIND_FARMS_ENABLED =
             config -> config.getBoolean("find-farms.enabled");
 
-    public static final ConfigValue<List<String>> FIND_TRAPS_CHECK_SPAWN_REASON =
-            config -> config.getStringList("find-farms.check-spawn-reason");
+    public static final ConfigValue<Integer> FIND_FARMS_KILLING_CHUMBER_RANGE =
+            config -> config.getInteger("find-farms.killing-chumber-range");
+
+    public static final ConfigValue<Integer> FIND_FARMS_KILLED_MOBS_TO_BE_KILLING_CHUMBER =
+            config -> config.getInteger("find-farms.killed-mobs-to-be-killing-chumber");
+
+    public static final ConfigValue<Map<SpawnReason, List<FindFarmsAction>>> FIND_FARMS_FARM_ACTIONS =
+            config -> {
+                Map<SpawnReason, List<FindFarmsAction>> result = new HashMap<>();
+                for (SpawnReason reason : SpawnReason.values()) {
+                    List<FindFarmsAction> actions = new ArrayList<>();
+                    for (String farmActionName : config.getStringList("find-farms.farm-actions." + reason.name())) {
+                        try {
+                            actions.add(FindFarmsAction.valueOf(farmActionName.toUpperCase(Locale.ROOT)));
+                        } catch (IllegalArgumentException ignored) {
+                        }
+                    }
+                    result.put(reason, actions);
+                }
+                return result;
+            };
 
     public static final ConfigValue<Boolean> ANTI_CLICKBOT_ENABLED =
             config -> config.getBoolean("anti-clickbot.enabled");

@@ -101,6 +101,21 @@ public final class Messages {
                     .decoration(TextDecoration.ITALIC, State.FALSE)
                     .build();
 
+    public static final Function<LogEntity, Component> FARM_IS_DETECTED =
+            log -> translatable()
+                    .key("farm-is-detected")
+                    .args(translatable(log.entity()), text(
+                            log.deathWorldName() + "/" +
+                            log.deathXLocation() + "/" +
+                            log.deathYLocation() + "/" +
+                            log.deathZLocation()
+                    ))
+                    .color(GRAY)
+                    .decoration(TextDecoration.ITALIC, State.FALSE)
+                    .clickEvent(ClickEvent.suggestCommand("/tp " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation()))
+                    .hoverEvent(HoverEvent.showText(text("/tp " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation())))
+                    .build();
+
     public static final BiFunction<Integer, Integer, Component> SPAWNER_LORE =
             (limit, limitMax) -> translatable()
                     .key("spawner-item.lore")

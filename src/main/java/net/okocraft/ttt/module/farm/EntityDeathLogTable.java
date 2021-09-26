@@ -2,6 +2,7 @@ package net.okocraft.ttt.module.farm;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,26 +11,25 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.jetbrains.annotations.NotNull;
 
-import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.database.Database;
 
 public class EntityDeathLogTable {
 
-    private final TTT plugin;
     private final Database database;
 
-    EntityDeathLogTable(TTT plugin) {
-        this.plugin = plugin;
-        this.database = plugin.getDatabase();
+    EntityDeathLogTable(Database database) {
+        this.database = database;
 
         String schema = """
                 CREATE TABLE IF NOT EXISTS entity_death_logs (
-                    timestump BIGINT PRIMARY KEY,
+                    timestamp_nano BIGINT NOT NULL,
+                    timestamp_milli INT NOT NULL,
                     entity VARCHAR(63) NOT NULL,
                     spawn_reason VARCHAR(31) NOT NULL,
                     spawn_world_name VARCHAR(63) NOT NULL,
@@ -39,15 +39,36 @@ public class EntityDeathLogTable {
                     death_world_name VARCHAR(63) NOT NULL,
                     death_x_location INT NOT NULL,
                     death_y_location INT NOT NULL,
-                    death_z_location INT NOT NULL
+                    death_z_location INT NOT NULL,
+                    PRIMARY KEY(timestamp_nano, timestamp_milli)
                 )
                 """;
-
+        
         database.execute(schema, statement -> {});
+
+        // TODO: mysql index is not supported now.
+        if (database.isSQLite()) {
+            database.execute("CREATE INDEX IF NOT EXISTS spawn_reason ON entity_death_logs (spawn_reason)", statement -> {});
+            database.execute("CREATE INDEX IF NOT EXISTS spawn_world_name ON entity_death_logs (spawn_world_name)", statement -> {});
+            database.execute("CREATE INDEX IF NOT EXISTS spawn_location ON entity_death_logs (spawn_x_location, spawn_z_location)", statement -> {});
+            database.execute("CREATE INDEX IF NOT EXISTS death_world_name ON entity_death_logs (death_world_name)", statement -> {});
+            database.execute("CREATE INDEX IF NOT EXISTS death_location ON entity_death_logs (death_x_location, death_z_location)", statement -> {});
+        }
+
+        // delete logs before 1 week
+        database.execute(
+                "DELETE FROM entity_death_logs WHERE timestamp_milli < ?",
+                statement -> statement.setLong(1, System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 3))
+        );
+        if (database.isSQLite()) {
+            database.execute("VACUUM", statement -> {});
+        }
+        
     }
 
     public record LogEntity(
-        long timestump,
+        long timestampMilli,
+        int timestampNano,
         @NotNull EntityType entity,
         @NotNull SpawnReason spawnReason,
         @NotNull String spawnWorldName,
@@ -66,12 +87,27 @@ public class EntityDeathLogTable {
         public Optional<World> getDeathWorld() {
             return Optional.ofNullable(Bukkit.getWorld(deathWorldName));
         }
+
+        public Location getSpawnLocation() {
+            return new Location(Bukkit.getWorld(spawnWorldName), spawnXLocation, spawnYLocation, spawnZLocation);
+        }
+
+        public Location getDeathLocation() {
+            return new Location(Bukkit.getWorld(deathWorldName), deathXLocation, deathYLocation, deathZLocation);
+        }
+
+        public Timestamp getTimestamp() {
+            Timestamp timestamp = new Timestamp(timestampMilli);
+            timestamp.setNanos(timestampNano % 1000000000);
+            return timestamp;
+        }
     }
 
     public boolean insert(LogEntity log) {
         database.execute("""
                 INSERT INTO entity_death_logs (
-                    timestump, 
+                    timestamp_milli, 
+                    timestamp_nano, 
                     entity, 
                     spawn_reason, 
                     spawn_world_name, 
@@ -83,28 +119,30 @@ public class EntityDeathLogTable {
                     death_y_location, 
                     death_z_location
                 ) VALUES (
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                 )
                 """,
                 statement -> {
-                    statement.setLong(1, log.timestump);
-                    statement.setString(2, log.entity.name());
-                    statement.setString(3, log.spawnReason.name());
-                    statement.setString(4, log.spawnWorldName);
-                    statement.setInt(5, log.spawnXLocation);
-                    statement.setInt(6, log.spawnYLocation);
-                    statement.setInt(7, log.spawnZLocation);
-                    statement.setString(8, log.deathWorldName);
-                    statement.setInt(9, log.deathXLocation);
-                    statement.setInt(10, log.deathYLocation);
-                    statement.setInt(11, log.deathZLocation);
+                    statement.setLong(1, log.timestampMilli);
+                    statement.setInt(2, log.timestampNano);
+                    statement.setString(3, log.entity.name());
+                    statement.setString(4, log.spawnReason.name());
+                    statement.setString(5, log.spawnWorldName);
+                    statement.setInt(6, log.spawnXLocation);
+                    statement.setInt(7, log.spawnYLocation);
+                    statement.setInt(8, log.spawnZLocation);
+                    statement.setString(9, log.deathWorldName);
+                    statement.setInt(10, log.deathXLocation);
+                    statement.setInt(11, log.deathYLocation);
+                    statement.setInt(12, log.deathZLocation);
                 }
         );
         return true;
     }
 
     public static class Field<T, K> {
-        public static final Field<Long, Long> TIMESTUMP = new Field<>("timestump", false, l -> l);
+        public static final Field<Long, Long> TIMESTUMP_MILLI = new Field<>("timestamp_milli", false, l -> l);
+        public static final Field<Integer, Integer> TIMESTUMP_NANO = new Field<>("timestamp_nano", false, i -> i);
         public static final Field<EntityType, String> ENTITY = new Field<>("entity", false, EntityType::name);
         public static final Field<SpawnReason, String> SPAWN_REASON = new Field<>("spawn_reason", false, SpawnReason::name);
         public static final Field<World, String> SPAWN_WORLD_NAME = new Field<>("spawn_world_name", false, World::getName);
@@ -228,9 +266,10 @@ public class EntityDeathLogTable {
                     List<LogEntity> result = new ArrayList<>();
                     while (resultSet.next()) {
                         result.add(new LogEntity(
-                                resultSet.getLong(Field.TIMESTUMP.databaseName),
+                                resultSet.getLong(Field.TIMESTUMP_MILLI.databaseName),
+                                resultSet.getInt(Field.TIMESTUMP_NANO.databaseName),
                                 EntityType.valueOf(resultSet.getString(Field.ENTITY.databaseName)),
-                                SpawnReason.valueOf(resultSet.getString(Field.SPAWN_WORLD_NAME.databaseName)),
+                                SpawnReason.valueOf(resultSet.getString(Field.SPAWN_REASON.databaseName)),
                                 resultSet.getString(Field.SPAWN_WORLD_NAME.databaseName),
                                 resultSet.getInt(Field.SPAWN_X_LOCATION.databaseName),
                                 resultSet.getInt(Field.SPAWN_Y_LOCATION.databaseName),
