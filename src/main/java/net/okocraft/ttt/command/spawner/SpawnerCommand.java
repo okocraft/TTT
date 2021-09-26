@@ -1,14 +1,10 @@
-package net.okocraft.ttt.command;
+package net.okocraft.ttt.command.spawner;
 
 import net.okocraft.ttt.TTT;
-import net.okocraft.ttt.command.spawner.SpawnerCommand;
+import net.okocraft.ttt.command.AbstractCommand;
 import net.okocraft.ttt.config.Messages;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,22 +16,17 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
-public class TTTCommand extends AbstractCommand implements CommandExecutor, TabCompleter {
+public class SpawnerCommand extends AbstractCommand {
 
     private final List<AbstractCommand> subCommands;
 
-    private TTTCommand(@NotNull TTT plugin) { // for subcommand
-        super("ttt", "ttt.command", Collections.emptySet());
+    public SpawnerCommand(@NotNull TTT plugin) {
+        super("spawner", "ttt.command.spawner", Set.of("s"));
         this.subCommands = List.of(
-            new SpawnerCommand(plugin)
+            new Get(plugin),
+            new Near(plugin),
+            new ResetLimit(plugin)
         );
-    }
-
-    public static void register(@NotNull TTT plugin, @NotNull PluginCommand command) {
-        var implementation = new TTTCommand(plugin);
-
-        command.setExecutor(implementation);
-        command.setTabCompleter(implementation);
     }
 
     @Override
@@ -45,12 +36,12 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
             return;
         }
 
-        if (args.length == 0) {
+        if (args.length == 1) {
             // TODO send help
             return;
         }
 
-        var subCommand = search(args[0]);
+        var subCommand = search(args[1]);
 
         if (subCommand.isPresent()) {
             subCommand.get().onCommand(sender, args);
@@ -61,13 +52,13 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
 
     @Override
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull String[] args) {
-        if (args.length == 0 || !sender.hasPermission(getPermission())) {
+        if (args.length == 1 || !sender.hasPermission(getPermission())) {
             return Collections.emptyList();
         }
 
-        if (args.length == 1) {
+        if (args.length == 2) {
             return StringUtil.copyPartialMatches(
-                    args[0],
+                    args[1],
                     subCommands.stream()
                             .map(command -> {
                                 Set<String> canditates = new HashSet<>();
@@ -81,7 +72,7 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
             );
         }
 
-        return search(args[0])
+        return search(args[1])
                 .map(cmd -> cmd.onTabComplete(sender, args))
                 .orElse(Collections.emptyList());
     }
@@ -96,20 +87,5 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
         }
 
         return Optional.empty();
-    }
-
-    // The command is implemented at onCommand(CommandSender, String[]).
-    @Override
-    public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                                   @NotNull String label, @NotNull String[] args) {
-        onCommand(sender, args);
-        return true;
-    }
-
-    // The tab completion is implemented at onTabComplete(CommandSender, String[]).
-    @Override
-    public final @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
-                                                     @NotNull String label, @NotNull String[] args) {
-        return onTabComplete(sender, args);
     }
 }
