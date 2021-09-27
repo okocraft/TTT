@@ -62,7 +62,7 @@ public class TTT extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        Spawner.setPlugin(this);
+        Spawner.initialize(this);
 
         try {
             ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
