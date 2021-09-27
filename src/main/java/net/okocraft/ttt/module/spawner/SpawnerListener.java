@@ -48,48 +48,64 @@ public class SpawnerListener implements Listener {
         if (!(block.getState() instanceof CreatureSpawner state)) {
             return;
         }
-        
-        // TODO: temp code
+
         if (!SpawnerState.isValid(state)) {
+            if (!player.hasPermission("ttt.spawner.break." + state.getSpawnedType().getKey().getKey())) {
+                event.setCancelled(true);
+                return;
+            }
+
+            // TODO: temp code
             PersistentDataContainer container = state.getPersistentDataContainer();
             for (NamespacedKey key : container.getKeys()) {
                 if (key.getNamespace().equals(plugin.getName().toLowerCase(Locale.ROOT))) {
                     container.remove(key);
                 }
             }
-        }
+            
+            // mined spawner amount limit
+            int minedSpawners = 0;
+            if (!player.hasPermission("ttt.bypass.spawner.minelimit")) {
+                Configuration playerData = plugin.getPlayerData()
+                        .getSection(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID());
+                if (playerData != null) {
+                    minedSpawners = playerData.getInteger(state.getSpawnedType().name());
 
-        if (!player.hasPermission("ttt.spawner.break." + state.getSpawnedType().getKey().getKey())) {
-            event.setCancelled(true);
-            return;
-        }
+                    int limit = Settings.getMaxMinableSpawners(config, block.getWorld(), state.getSpawnedType());
+                    if (minedSpawners >= limit) {
+                        event.setCancelled(true);
+                        player.sendMessage(Messages.spawnerMineLimit(block.getWorld(), state.getSpawnedType(), limit));
+                        return;
+                    }
+                }
+            }
 
-        // flag
-        // TODO: implement
-
-        // mined spawner amount
-        Configuration playerData = plugin.getPlayerData().getSection(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID());
-        int minedSpawners;
-        if (playerData != null) {
-            minedSpawners = playerData.getInteger(state.getSpawnedType().name());
-            if (minedSpawners >= Settings.getMaxMinableSpawners(config, block.getWorld(), state.getSpawnedType())) {
-                event.setCancelled(true);
+            if (!player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
                 return;
             }
+
+            if (player.hasPermission("ttt.spawner.drop.withoutsilktouch") || player.getInventory().getItemInMainHand()
+                    .getEnchantments().containsKey(Enchantment.SILK_TOUCH)) {
+                event.setExpToDrop(0);
+                block.getWorld().dropItemNaturally(block.getLocation(),
+                        SpawnerItem.from(state).getWithLocale(event.getPlayer().locale()));
+
+                minedSpawners++;
+                plugin.getPlayerData().set(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID() + "."
+                        + state.getSpawnedType().name(), minedSpawners);
+            }
+            
         } else {
-            minedSpawners = 0;
-        }
+            if (!player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
+                return;
+            }
 
-        if (player.hasPermission("ttt.spawner.drop.withoutsilktouch")
-                || player.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.SILK_TOUCH)) {
-            event.setExpToDrop(0);
-            block.getWorld().dropItemNaturally(
-                    block.getLocation(),
-                    SpawnerItem.from(state).getWithLocale(event.getPlayer().locale())
-            );
-
-            minedSpawners++;
-            plugin.getPlayerData().set(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID() + "." + state.getSpawnedType().name(), minedSpawners);
+            if (player.hasPermission("ttt.spawner.drop.withoutsilktouch") || player.getInventory().getItemInMainHand()
+                    .getEnchantments().containsKey(Enchantment.SILK_TOUCH)) {
+                event.setExpToDrop(0);
+                block.getWorld().dropItemNaturally(block.getLocation(),
+                        SpawnerItem.from(state).getWithLocale(event.getPlayer().locale()));
+            }
         }
     }
 
