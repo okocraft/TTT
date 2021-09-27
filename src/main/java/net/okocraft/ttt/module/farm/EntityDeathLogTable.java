@@ -28,8 +28,8 @@ public class EntityDeathLogTable {
 
         String schema = """
                 CREATE TABLE IF NOT EXISTS entity_death_logs (
-                    timestamp_nano BIGINT NOT NULL,
                     timestamp_milli INT NOT NULL,
+                    timestamp_nano BIGINT NOT NULL,
                     entity VARCHAR(63) NOT NULL,
                     spawn_reason VARCHAR(31) NOT NULL,
                     spawn_world_name VARCHAR(63) NOT NULL,
@@ -40,7 +40,7 @@ public class EntityDeathLogTable {
                     death_x_location INT NOT NULL,
                     death_y_location INT NOT NULL,
                     death_z_location INT NOT NULL,
-                    PRIMARY KEY(timestamp_nano, timestamp_milli)
+                    PRIMARY KEY(timestamp_milli, timestamp_nano)
                 )
                 """;
         
