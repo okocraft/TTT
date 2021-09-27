@@ -16,6 +16,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.Messages;
@@ -100,7 +101,9 @@ public class FarmListener implements Listener {
                 }
             }
         } else {
-            dataTable.insert(log);
+            new BukkitRunnable(){
+                public void run() { dataTable.insert(log); }
+            }.runTaskAsynchronously(plugin);
         }
     }
 
