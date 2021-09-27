@@ -55,7 +55,7 @@ public class EntityDeathLogTable {
             database.execute("CREATE INDEX IF NOT EXISTS death_location ON entity_death_logs (death_x_location, death_z_location)", statement -> {});
         }
 
-        // delete logs before 1 week
+        // delete logs before 3 day
         database.execute(
                 "DELETE FROM entity_death_logs WHERE timestamp_milli < ?",
                 statement -> statement.setLong(1, System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 3))
