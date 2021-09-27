@@ -39,7 +39,7 @@ public class Get extends AbstractCommand {
             sender.sendMessage(Messages.COMMAND_PLAYER_ONLY);
             return;
         }
-        if (args.length == 1) {
+        if (args.length == 2) {
             sender.sendMessage(Messages.COMMAND_NOT_ENOUGH_ARGUMENTS);
             return;
         }
@@ -53,7 +53,7 @@ public class Get extends AbstractCommand {
         }
 
         int amount = 1;
-        if (args.length >= 3) {
+        if (args.length >= 4) {
             try {
                 amount = Integer.parseInt(args[3]);
             } catch (NumberFormatException ignored) {}
