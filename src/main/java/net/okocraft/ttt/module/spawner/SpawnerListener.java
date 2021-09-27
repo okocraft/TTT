@@ -1,6 +1,7 @@
 package net.okocraft.ttt.module.spawner;
 
 import java.util.Locale;
+import java.util.Map;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
@@ -8,8 +9,10 @@ import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,11 +24,13 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.Messages;
@@ -233,5 +238,48 @@ public class SpawnerListener implements Listener {
         if (SpawnerItem.isValid(item)) {
             event.setCurrentItem(SpawnerItem.from(item).getWithLocale(((Player) event.getWhoClicked()).locale()));
         }
+    }
+
+    @EventHandler
+    private void onChunkPopulate(ChunkPopulateEvent event) {
+        new BukkitRunnable(){
+
+            @Override
+            public void run() {
+                for (BlockState tile : event.getChunk().getTileEntities()) {
+                    if (tile instanceof CreatureSpawner spawner && !SpawnerState.isValid(spawner)) {
+                        Map<EntityType, Double> weightMap = Settings.getSpawnerTypeMapping(
+                                config,
+                                event.getWorld(),
+                                spawner.getSpawnedType()
+                        );
+                        if (!weightMap.isEmpty()) {
+                            EntityType entityType = chooseOnWeight(weightMap);
+                            spawner.setSpawnedType(entityType);
+                            spawner.update();
+                        }
+                    }
+                }
+            }
+
+        }.runTaskLater(plugin, 1);
+    }
+
+    public static <T> T chooseOnWeight(Map<T, Double> weightMap) {
+        if (weightMap.isEmpty()) {
+            throw new RuntimeException("weightMap cannot be empty.");
+        }
+        double completeWeight = 0.0;
+        for (Double weight : weightMap.values()) {
+            completeWeight += weight;
+        }
+        double r = Math.random() * completeWeight;
+        double countWeight = 0.0;
+        for (Map.Entry<T, Double> entry : weightMap.entrySet()) {
+            countWeight += entry.getValue();
+            if (countWeight >= r)
+                return entry.getKey();
+        }
+        throw new RuntimeException("Should never be shown.");
     }
 }

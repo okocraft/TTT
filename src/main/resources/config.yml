@@ -1,16 +1,18 @@
 spawner:
   # Only for this feature, when world uuid is changed, limit will be reset.
   max-minable-spawners:
+    # world_name:
+    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
     default:
       DEFAULT: 2
-    world: {}
     resource:
       ZOMBIE: 2
 
   max-spawnable-mobs:
+    # world_name:
+    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
     default:
       DEFAULT: 100000
-    world: {}
     resource:
       ZOMBIE: 100000
 
@@ -21,6 +23,8 @@ spawner:
     radius: 34
     amount: 2
   
+  # Spawners that is not placed by player, in other word, spawners that do not have any data
+  # of this plugin are not affected by redstone.
   redstone-switches-spawner:
     default:
       # If enabled false, redstone power will not affect spawners.
@@ -36,6 +40,48 @@ spawner:
       enabled: true
       reversed: true
 
+  # This feature adds other entity type for spawner on chunk population.
+  # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
+  # An number for each mapped type is weight. Higher number, more likely to be chosen.
+  type-mapping:
+    # world_name:
+    #   ENTITY_TYPE_NAME: <number> # Note that ENTITY_TYPE_NAME cannot be DEFAULT in this section
+    default:
+      ZOMBIE:
+        ZOMBIE: 3
+        DROWNED: 2
+        HUSK: 2
+        PHANTOM: 1
+        GUARDIAN: 1
+        CREEPER: 1
+      SKELETON:
+        SKELETON: 6
+        STRAY: 6
+        WITCH: 4
+        ENDERMAN: 1
+        SHULKER: 1
+      SPIDER:
+        CAVE_SPIDER: 1
+        SPIDER: 2
+      CAVE_SPIDER:
+        CAVE_SPIDER: 1
+        SPIDER: 2
+      SILVERFISH:
+        SILVERFISH: 2
+        ENDERMITE: 1
+    resource_nether:
+      BLAZE:
+        BLAZE: 20
+        STRIDER: 10
+        GHAST: 5
+        HOGLIN: 3
+        ZOGLIN: 3
+        ZOMBIFIED_PIGLIN: 2
+        PIGLIN: 2
+        PIGLIN_BRUTE: 1
+      MAGMA_CUBE:
+        MAGMA_CUBE: 2
+        SLIME: 1
 
 # Stack mobs.
 mob-stacker:

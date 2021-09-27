@@ -78,6 +78,26 @@ public final class Settings {
         return getPerWorldPerEntityTypeValue(config, "spawner.max-minable-spawners", world, entityType, 2);
     }
 
+    public static Map<EntityType, Double> getSpawnerTypeMapping(@NotNull Configuration config, @Nullable World world, @NotNull EntityType entityType) {
+        Map<EntityType, Double> weightMap = new HashMap<>();
+        String worldName = world == null ? "default" : world.getName();
+        Configuration typeMappingSection = config.getSection("spawner.type-mapping." + worldName + "." + entityType.name());
+        if (typeMappingSection == null) {
+            typeMappingSection = config.getSection("spawner.type-mapping.default." + entityType.name());
+            if (typeMappingSection == null) {
+                return weightMap;
+            } 
+        }
+        for (String key : typeMappingSection.getKeyList()) {
+            try {
+                weightMap.put(EntityType.valueOf(key), typeMappingSection.getDouble(key, 0));
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+        }
+        return weightMap;
+    }
+
     public static final ConfigValue<List<String>> SPAWNER_UNPLACEABLE_WORLDS =
             config -> config.getStringList("spawner-unplaceable-worlds");
 
