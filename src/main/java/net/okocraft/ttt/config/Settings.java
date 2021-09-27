@@ -98,30 +98,24 @@ public final class Settings {
         return weightMap;
     }
 
-    public static final ConfigValue<List<String>> SPAWNER_UNPLACEABLE_WORLDS =
-            config -> config.getStringList("spawner-unplaceable-worlds");
+    public static final ConfigValue<Boolean> FARM_PREVENT_CRAMMING_DEATH_DROP =
+            config -> config.getBoolean("farm.prevent-cramming-death-drop");
 
-    public static final ConfigValue<Boolean> MOB_STACKER_ENABLED =
-            config -> config.getBoolean("mob-stacker.enabled");
+    public static final ConfigValue<Boolean> FARM_FINDER_ENABLED =
+            config -> config.getBoolean("farms.finder.enabled");
 
-    public static final ConfigValue<Boolean> MOB_STACKER_TARGET_SPAWN_REASON =
-            config -> config.getBoolean("mob-stacker.target-spawn-reason");
+    public static final ConfigValue<Integer> FARM_FINDER_KILLING_CHUMBER_RANGE =
+            config -> config.getInteger("farm.finder.killing-chumber-range");
 
-    public static final ConfigValue<Boolean> FIND_FARMS_ENABLED =
-            config -> config.getBoolean("find-farms.enabled");
+    public static final ConfigValue<Integer> FARM_FINDER_KILLED_MOBS_TO_BE_KILLING_CHUMBER =
+            config -> config.getInteger("farm.finder.killed-mobs-to-be-killing-chumber");
 
-    public static final ConfigValue<Integer> FIND_FARMS_KILLING_CHUMBER_RANGE =
-            config -> config.getInteger("find-farms.killing-chumber-range");
-
-    public static final ConfigValue<Integer> FIND_FARMS_KILLED_MOBS_TO_BE_KILLING_CHUMBER =
-            config -> config.getInteger("find-farms.killed-mobs-to-be-killing-chumber");
-
-    public static final ConfigValue<Map<SpawnReason, List<FindFarmsAction>>> FIND_FARMS_FARM_ACTIONS =
+    public static final ConfigValue<Map<SpawnReason, List<FindFarmsAction>>> FARM_FINDER_FARM_ACTIONS =
             config -> {
                 Map<SpawnReason, List<FindFarmsAction>> result = new HashMap<>();
                 for (SpawnReason reason : SpawnReason.values()) {
                     List<FindFarmsAction> actions = new ArrayList<>();
-                    for (String farmActionName : config.getStringList("find-farms.farm-actions." + reason.name())) {
+                    for (String farmActionName : config.getStringList("farm.finder.farm-actions." + reason.name())) {
                         try {
                             actions.add(FindFarmsAction.valueOf(farmActionName.toUpperCase(Locale.ROOT)));
                         } catch (IllegalArgumentException ignored) {
@@ -132,13 +126,15 @@ public final class Settings {
                 return result;
             };
 
+    public static final ConfigValue<Boolean> FARM_MOB_STACKER_ENABLED =
+            config -> config.getBoolean("farm.mob-stacker.enabled");
+
+    public static final ConfigValue<String> FARM_MOB_STACKER_TARGET_SPAWN_REASON =
+            config -> config.getString("farm.mob-stacker.target-spawn-reason");
+
     public static final ConfigValue<Boolean> ANTI_CLICKBOT_ENABLED =
             config -> config.getBoolean("anti-clickbot.enabled");
 
     public static final ConfigValue<List<String>> ANTI_CLICKBOT_TYPE =
             config -> config.getStringList("anti-clickbot.type");
-
-    public static final ConfigValue<Boolean> PREVENT_CRAMMING_DEATH_DROP =
-            config -> config.getBoolean("prevent-cramming-death-drop");
-
 }

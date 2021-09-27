@@ -30,18 +30,21 @@ import net.okocraft.ttt.module.farm.EntityDeathLogTable.LogEntity;
 public class FarmListener implements Listener {
 
     private final TTT plugin;
+    private final Configuration config;
     private final EntityDeathLogTable dataTable;
     private final Map<UUID, WrappedLocation> farmLocationsDetected = new HashMap<>();
     
     public FarmListener(TTT plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfiguration();
         this.dataTable = new EntityDeathLogTable(plugin.getDatabase());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
+
+        if (config.get(Settings.FARM_PREVENT_CRAMMING_DEATH_DROP) && entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
             event.setDroppedExp(0);
             event.getDrops().clear();
         }
@@ -71,10 +74,9 @@ public class FarmListener implements Listener {
                 deathLocation.getBlockZ()
         );
 
-        Configuration config = plugin.getConfiguration();
-        List<FindFarmsAction> farmActions = config.get(Settings.FIND_FARMS_FARM_ACTIONS)
+        List<FindFarmsAction> farmActions = config.get(Settings.FARM_FINDER_FARM_ACTIONS)
                 .getOrDefault(spawnReason, new ArrayList<>());
-        int killingChumberRange = config.get(Settings.FIND_FARMS_KILLING_CHUMBER_RANGE);
+        int killingChumberRange = config.get(Settings.FARM_FINDER_KILLING_CHUMBER_RANGE);
         Condition condition = new Condition(Field.SPAWN_REASON, spawnReason)
                 .and(Field.DEATH_WORLD_NAME, entity.getWorld())
                 .and(Field.DEATH_X_LOCATION, deathLocation.getBlockX() - killingChumberRange, deathLocation.getBlockX() + killingChumberRange)
@@ -83,7 +85,7 @@ public class FarmListener implements Listener {
         
         List<LogEntity> searchResults = dataTable.search(condition);
         
-        if (searchResults.size() >= config.get(Settings.FIND_FARMS_KILLED_MOBS_TO_BE_KILLING_CHUMBER)) {
+        if (searchResults.size() >= config.get(Settings.FARM_FINDER_KILLED_MOBS_TO_BE_KILLING_CHUMBER)) {
             for (FindFarmsAction action : farmActions) {
                 if (action == FindFarmsAction.CLEAR_DROP) {
                     event.getDrops().clear();

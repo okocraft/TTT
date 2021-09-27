@@ -83,50 +83,54 @@ spawner:
         MAGMA_CUBE: 2
         SLIME: 1
 
-# Stack mobs.
-mob-stacker:
-  enabled: true
-  target-spawn-reason:
-    - SPAWNER
+farm:
+  # If true, stops entity death drop when the entity's death reason is cramming. 
+  prevent-cramming-death-drop: true
 
-# Find mob farms.
-# If spawn reason includes BLEEDING,
-# you can also find normal farm which is not grinder.
-find-farms:
-  enabled: true
-  killing-chumber-range: 2
-  # Amount of killed mobs to consider the location as killing-chumber in the range specified above.
-  killed-mobs-to-be-killing-chumber: 30
-  farm-actions:
-    SPAWNER: []
-    NATURAL:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    NETHER_PORTAL:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    PATROL:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    VILLAGE_DEFENSE:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    VILLAGE_INVASION:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    RAID:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
-    SLIME_SPLIT:
-      - CLEAR_DROP
-      - CLEAR_EXP
-      - NOTIFY
+  # Find mob farms.
+  # If spawn reason includes BLEEDING,
+  # you can also find normal farm which is not grinder.
+  finder:
+    enabled: true
+    killing-chumber-range: 2
+    # Amount of killed mobs to consider the location as killing-chumber in the range specified above.
+    killed-mobs-to-be-killing-chumber: 30
+    farm-actions:
+      SPAWNER: []
+      NATURAL:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      NETHER_PORTAL:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      PATROL:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      VILLAGE_DEFENSE:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      VILLAGE_INVASION:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      RAID:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+      SLIME_SPLIT:
+        - CLEAR_DROP
+        - CLEAR_EXP
+        - NOTIFY
+
+  # Stack mobs.
+  mob-stacker:
+    enabled: true
+    target-spawn-reason:
+      - SPAWNER
 
 anti-clickbot:
   enabled: true
@@ -139,5 +143,3 @@ anti-clickbot:
   type: SUMMON_ENEMY
   warn-before: true
   warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
-
-prevent-cramming-death-drop: true
