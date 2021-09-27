@@ -1,13 +1,14 @@
 plugin-prefix: "[TTT] "
 spawner-item:
-  display-name: "{0} のスポナー"
+  display-name: "{0}のスポナー"
   lore: "スポーン可能モブ数: {0}/{1}"
 
 shown-spawner-status: "\n-------------------\n起動状態: {0}\nスポーンされるモブ: {1}\nスポーン可能モブ数: {2}/{3}\n-------------------"
-spawner-start-tip: "スポナーにレッドストーン動力を与えるとスポナーを停止できます。"
-spawner-start-tip-reverse: "スポナーにレッドストーン動力を与えるとスポナーを起動できます。"
+spawner-stop-tip: "スポナーにレッドストーン動力を与えるとスポナーを停止できます。"
+spawner-start-tip: "スポナーにレッドストーン動力を与えるとスポナーを起動できます。"
 cannot-change-spawner: "スポナーの中のモブを変更することはできません。"
 too-many-spawners: "スポナーの数が多すぎます。半径{0}ブロックにつき{1}個までしか設置できません。"
+spawner-mine-limit: "{0}ワールドでの{1}スポナーの採集数が最大に達しました。(最大採集数: {2})"
 player-not-found: "プレイヤーが見つかりませんでした。"
 player-limit-reset: "プレイヤーのスポナー採掘数のデータがリセットされました。"
 

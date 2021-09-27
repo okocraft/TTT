@@ -15,6 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 
@@ -82,11 +83,26 @@ public final class Messages {
                     )
                     .build();
 
+    public static final Component SPAWNER_STOP_TIP =
+            PREFIX.toBuilder().append(translatable("spawner-stop-tip", GRAY)).build();
+
+    public static final Component spawnerMineLimit(World world, EntityType entityType, int limit) {
+        return PREFIX.toBuilder()
+                .append(
+                        translatable()
+                                .key("spawner-mine-limit")
+                                .args(
+                                        text(world.getName()),
+                                        translatable(entityType.translationKey()),
+                                        text(limit))
+                                .color(GRAY)
+                                .build()
+                )
+                .build();
+    }
+
     public static final Component SPAWNER_START_TIP =
             PREFIX.toBuilder().append(translatable("spawner-start-tip", GRAY)).build();
-
-    public static final Component SPAWNER_START_TIP_REVERSE =
-            PREFIX.toBuilder().append(translatable("spawner-start-tip-reverse", GRAY)).build();
 
     public static final Component CANNOT_CHANGE_SPAWNER =
             PREFIX.toBuilder().append(translatable("cannot-change-spawner", GRAY)).build();

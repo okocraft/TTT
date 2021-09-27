@@ -1,4 +1,5 @@
 spawner:
+  # Only for this feature, when world uuid is changed, limit will be reset.
   max-minable-spawners:
     default:
       DEFAULT: 2
@@ -20,29 +21,21 @@ spawner:
     radius: 34
     amount: 2
   
-  stopped-by-redstone-signal:
-    # If reverse is true, spawners stop spawning mob when it not powered.
-    reverse: false
-    enabled-worlds:
-    #- ALL
-    - resource
+  redstone-switches-spawner:
+    default:
+      # If enabled false, redstone power will not affect spawners.
+      # reversed value are ignored at the situation. 
+      enabled: false
+      # If reversed is false, spawners will stop when redstone powered.
+      # If true, spawners will start when redstone powered.
+      reversed: false
+    world:
+      enabled: false
+      reversed: false
+    tt:
+      enabled: true
+      reversed: true
 
-  # In unplaceable world, you cannot place it unless you have perm "ttt.bypass.unplaceable"
-  # All spawners in unplaceable world are treated like they do not have any data of this plugin,
-  # even if spawner actually have the data.
-  # Means, spawners with data will lost its data when the spawner is broken
-  # if the world is specified below.
-  spawner-unplaceable-worlds:
-    - resource
-    - resource_nether
-    - resource_the_end
-
-  # Spawn egg cannot change spawner.
-  cancel-changing-mob: true
-
-  total-spawnable-mobs:
-    DEFAULT: 100000
-    ZOMBIE: 100000
 
 # Stack mobs.
 mob-stacker:

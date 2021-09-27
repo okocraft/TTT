@@ -32,11 +32,15 @@ public final class Settings {
     public static final ConfigValue<Integer> SPAWNER_ISOLATING_AMOUNT =
             config -> config.getInteger("spawner.isolating.amount");
 
-    public static final ConfigValue<Boolean> SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE =
-            config -> config.getBoolean("spawner.stopped-by-redstone-signal.reverse");
-
-    public static final ConfigValue<List<String>> SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS =
-            config -> config.getStringList("spawner.stopped-by-redstone-signal.enabled-worlds");
+    public static boolean isRedstoneSpawnerSwitchEnabled(Configuration config, World world) {
+        String worldName = world == null ? "default" : world.getName(); 
+        return config.getBoolean("spawner.redstone-switches-spawner." + worldName + ".enabled", false);
+    }
+    
+    public static boolean isRedstoneSpawnerSwitchReversed(Configuration config, World world) {
+        String worldName = world == null ? "default" : world.getName(); 
+        return config.getBoolean("spawner.redstone-switches-spawner." + worldName + ".reversed", false);
+    }
     
     // TODO: move
     @NotNull

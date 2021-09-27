@@ -169,11 +169,11 @@ public class SpawnerListener implements Listener {
 
         event.getPlayer().sendMessage(Messages.SHOWN_SPAWNER_STATUS.apply(SpawnerState.from(spawner)));
 
-        if (config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS).contains(block.getWorld().getName())) {
-            if (config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE)) {
-                event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP_REVERSE);
-            } else {
+        if (Settings.isRedstoneSpawnerSwitchEnabled(config, block.getWorld())) {
+            if (Settings.isRedstoneSpawnerSwitchReversed(config, block.getWorld())) {
                 event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP);
+            } else {
+                event.getPlayer().sendMessage(Messages.SPAWNER_STOP_TIP);
             }
         }
     }

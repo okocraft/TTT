@@ -98,10 +98,9 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
 
     public boolean isRunning() {
         Configuration config = plugin.getConfiguration();
-        return !config.get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_ENABLED_WORLDS)
-                .contains(spawner.getWorld().getName())
-                || isBlockPowered(spawner.getBlock()) != config
-                        .get(Settings.SPAWNER_STOPPED_BY_REDSTONE_SIGNAL_REVERSE);
+        return !Settings.isRedstoneSpawnerSwitchEnabled(config, spawner.getWorld())
+                || isBlockPowered(spawner.getBlock()) != Settings.isRedstoneSpawnerSwitchReversed(config,
+                        spawner.getWorld());
     }
 
     private static boolean isBlockPowered(Block block) {
