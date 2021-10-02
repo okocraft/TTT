@@ -19,8 +19,8 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>sk89q-repo</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>libs</id>
+            <url>file://${basedir}/lib</url>
         </repository>
     </repositories>
     
@@ -60,6 +60,12 @@
             <artifactId>HikariCP</artifactId>
             <version>4.0.3</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.plotsquared</groupId>
+            <artifactId>PlotSquared-Bukkit</artifactId>
+            <version>6.0.10-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

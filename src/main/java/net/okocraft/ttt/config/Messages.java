@@ -68,6 +68,17 @@ public final class Messages {
                     )
                     .build();
 
+    public static final Function<Integer, Component> TOO_MANY_SPAWNERS_IN_PLOT =
+            amount -> PREFIX.toBuilder()
+                    .append(
+                            translatable()
+                                    .key("too-many-spawners-in-plot")
+                                    .args(text(amount, AQUA))
+                                    .color(RED)
+                                    .build()
+                    )
+                    .build();
+
     public static final Function<SpawnerState, Component> SHOWN_SPAWNER_STATUS =
             spawner -> PREFIX.toBuilder()
                     .append(

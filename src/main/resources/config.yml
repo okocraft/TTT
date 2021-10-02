@@ -22,6 +22,11 @@ spawner:
     enabled: true
     radius: 34
     amount: 2
+    # If in plotsqured plot, spawners outside of plot are not counted for isolating limit.
+    plotsquared:
+      radius: 34
+      # Amount of spawner per plotsquared plot.
+      amount: 2
   
   # Spawners that is not placed by player, in other word, spawners that do not have any data
   # of this plugin are not affected by redstone.

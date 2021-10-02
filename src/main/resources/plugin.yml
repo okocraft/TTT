@@ -5,6 +5,7 @@ author: LazyGon
 api-version: 1.17
 softdepend:
   - "WorldGuard"
+  - "PlotSquared"
 
 commands:
   ttt:

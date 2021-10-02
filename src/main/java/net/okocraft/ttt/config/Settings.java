@@ -32,6 +32,12 @@ public final class Settings {
     public static final ConfigValue<Integer> SPAWNER_ISOLATING_AMOUNT =
             config -> config.getInteger("spawner.isolating.amount");
 
+    public static final ConfigValue<Integer> SPAWNER_ISOLATING_PLOTSQUARED_RADIUS =
+            config -> config.getInteger("spawner.isolating.plotsquared.radius");
+
+    public static final ConfigValue<Integer> SPAWNER_ISOLATING_PLOTSQUARED_AMOUNT =
+            config -> config.getInteger("spawner.isolating.plotsquared.amount");
+
     public static boolean isRedstoneSpawnerSwitchEnabled(Configuration config, World world) {
         String worldName = world == null ? "default" : world.getName(); 
         return config.getBoolean("spawner.redstone-switches-spawner." + worldName + ".enabled", false);

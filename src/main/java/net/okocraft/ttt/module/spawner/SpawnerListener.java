@@ -1,7 +1,9 @@
 package net.okocraft.ttt.module.spawner;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
@@ -148,6 +150,32 @@ public class SpawnerListener implements Listener {
     private void cancelEventIfNotIsolated(CreatureSpawner placed, BlockPlaceEvent event) {
         if (!config.get(Settings.SPAWNER_ISOLATING_ENABLED)) {
             return;
+        }
+
+        // PlotSquared
+        try {
+            com.plotsquared.core.plot.Plot plot = 
+                    com.plotsquared.core.plot.Plot.getPlot(com.plotsquared.bukkit.util.BukkitUtil.adapt(placed.getLocation()));
+            if (plot != null) {
+                Set<CreatureSpawner> spawners = new HashSet<>();
+                for (CreatureSpawner spawner : SpawnerState.getSpawnersIn(
+                        config.get(Settings.SPAWNER_ISOLATING_PLOTSQUARED_RADIUS), placed.getLocation())) {
+                    for (com.sk89q.worldedit.regions.CuboidRegion region : plot.getRegions()) {
+                        if (region.contains(com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(spawner.getLocation())
+                                .toVector().toBlockPoint())) {
+                            spawners.add(spawner);
+                        }
+                    }
+                }
+
+                int maxSpawners = config.get(Settings.SPAWNER_ISOLATING_PLOTSQUARED_AMOUNT);
+                if (spawners.size() > maxSpawners) {
+                    event.setCancelled(true);
+                    event.getPlayer().sendMessage(Messages.TOO_MANY_SPAWNERS_IN_PLOT.apply(maxSpawners));
+                    return;
+                }
+            }
+        } catch (NoClassDefFoundError ignored) {
         }
 
         int maxSpawners = config.get(Settings.SPAWNER_ISOLATING_AMOUNT);
