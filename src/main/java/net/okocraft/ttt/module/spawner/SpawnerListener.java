@@ -130,6 +130,8 @@ public class SpawnerListener implements Listener {
         }
 
         ItemStack item = event.getItemInHand();
+        // TODO: Temp code.
+        SpawnerItem.fixData(item);
         if (!SpawnerItem.isValid(item)) {
             if (!event.getPlayer().hasPermission("ttt.spawner.place.*") && !event.getPlayer().hasPermission("ttt.spawner.place.pig")) {
                 event.setCancelled(true);
