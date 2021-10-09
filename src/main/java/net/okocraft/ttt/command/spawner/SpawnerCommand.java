@@ -23,9 +23,9 @@ public class SpawnerCommand extends AbstractCommand {
     public SpawnerCommand(@NotNull TTT plugin) {
         super("spawner", "ttt.command.spawner", Set.of("s"));
         this.subCommands = List.of(
-            new Get(plugin),
-            new Near(plugin),
-            new ResetLimit(plugin)
+            new GetCommand(plugin),
+            new NearCommand(plugin),
+            new ResetLimitCommand(plugin)
         );
     }
 
