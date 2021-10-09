@@ -44,7 +44,7 @@ permissions:
     default: true
   ttt.command.spawner.near:
     description: Permission for `/ttt spawner near` command.
-    default: true
+    default: op
   ttt.command.spawner.get:
     description: Permission for `/ttt spawner get` command.
     default: op
