@@ -57,7 +57,7 @@ public class SpawnerListener implements Listener {
         }
 
         if (!SpawnerState.isValid(state)) {
-            if (!player.hasPermission("ttt.spawner.break." + state.getSpawnedType().getKey().getKey())) {
+            if (!player.hasPermission("ttt.spawner.break.*") && !player.hasPermission("ttt.spawner.break." + state.getSpawnedType().getKey().getKey())) {
                 event.setCancelled(true);
                 return;
             }
@@ -87,7 +87,7 @@ public class SpawnerListener implements Listener {
                 }
             }
 
-            if (!player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
+            if (!player.hasPermission("ttt.spawner.drop.*") && !player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
                 return;
             }
 
@@ -103,7 +103,7 @@ public class SpawnerListener implements Listener {
             }
             
         } else {
-            if (!player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
+            if (!player.hasPermission("ttt.spawner.drop.*") && !player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
                 return;
             }
 
@@ -131,14 +131,14 @@ public class SpawnerListener implements Listener {
 
         ItemStack item = event.getItemInHand();
         if (!SpawnerItem.isValid(item)) {
-            if (!event.getPlayer().hasPermission("ttt.spawner.place.pig")) {
+            if (!event.getPlayer().hasPermission("ttt.spawner.place.*") && !event.getPlayer().hasPermission("ttt.spawner.place.pig")) {
                 event.setCancelled(true);
             }
             return;
         }
 
         SpawnerItem spawnerItem = SpawnerItem.from(item);
-        if (!event.getPlayer().hasPermission("ttt.spawner.place." + spawnerItem.getSpawnedType().getKey().getKey())) {
+        if (!event.getPlayer().hasPermission("ttt.spawner.place.*") && !event.getPlayer().hasPermission("ttt.spawner.place." + spawnerItem.getSpawnedType().getKey().getKey())) {
             event.setCancelled(true);
             return;
         }
@@ -231,8 +231,9 @@ public class SpawnerListener implements Listener {
     private void checkSpawnEggAndCancel(PlayerInteractEvent event) {
         Block clickedBlock = event.getClickedBlock();
         ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-        if (clickedBlock != null && clickedBlock.getType() == Material.SPAWNER
-                && meta instanceof SpawnEggMeta eggMeta && event.getPlayer().hasPermission("ttt.spawner.change." + eggMeta.getSpawnedType())) {
+        if (clickedBlock != null && clickedBlock.getType() == Material.SPAWNER && meta instanceof SpawnEggMeta eggMeta
+                && (event.getPlayer().hasPermission("ttt.spawner.change.*")
+                        || event.getPlayer().hasPermission("ttt.spawner.change." + eggMeta.getSpawnedType()))) {
             event.setUseItemInHand(Result.DENY);
             event.getPlayer().sendMessage(Messages.CANNOT_CHANGE_SPAWNER);
         }
