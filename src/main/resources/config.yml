@@ -76,14 +76,14 @@ spawner:
         ENDERMITE: 1
     resource_nether:
       BLAZE:
-        BLAZE: 20
-        STRIDER: 10
-        GHAST: 5
+        BLAZE: 10
+        STRIDER: 5
         HOGLIN: 3
         ZOGLIN: 3
-        ZOMBIFIED_PIGLIN: 2
-        PIGLIN: 2
-        PIGLIN_BRUTE: 1
+        ZOMBIFIED_PIGLIN: 3
+        PIGLIN: 3
+        PIGLIN_BRUTE: 2
+        GHAST: 2
       MAGMA_CUBE:
         MAGMA_CUBE: 2
         SLIME: 1
