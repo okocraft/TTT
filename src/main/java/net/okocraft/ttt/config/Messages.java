@@ -43,7 +43,7 @@ public final class Messages {
             PREFIX.toBuilder().append(translatable("command.player-only", RED)).build();
 
     public static final Component COMMAND_NEAR_HEADER =
-            PREFIX.toBuilder().append(translatable("command.player-only", RED)).build();
+            PREFIX.toBuilder().append(translatable("command.near.header", RED)).build();
 
     public static final Function<CreatureSpawner, Component> COMMAND_NEAR_ENTRY =
             spawner -> {
@@ -51,7 +51,7 @@ public final class Messages {
                 String locStr = loc.getWorld().getName() + "/" + loc.getBlockX() + "/" + loc.getBlockY() + "/" + loc.getBlockZ();
             
                 return translatable()
-                        .key("too-many-spawners")
+                        .key("command.near.entry")
                         .args(translatable(spawner.getType(), AQUA), text(locStr, AQUA))
                         .color(RED)
                         .build();
