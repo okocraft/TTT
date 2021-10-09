@@ -1,5 +1,6 @@
 package net.okocraft.ttt.module.spawner;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -100,6 +101,11 @@ public class SpawnerListener implements Listener {
                 minedSpawners++;
                 plugin.getPlayerData().set(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID() + "."
                         + state.getSpawnedType().name(), minedSpawners);
+                try {
+                    plugin.getPlayerData().save();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             
         } else {

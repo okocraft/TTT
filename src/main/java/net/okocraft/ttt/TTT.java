@@ -73,8 +73,8 @@ public class TTT extends JavaPlugin {
         }
 
         try {
-            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", configuration.getPath());
-            configuration.load();
+            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", playerData.getPath());
+            playerData.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load playerdata.yml", e);
         }
