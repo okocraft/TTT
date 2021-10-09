@@ -20,11 +20,11 @@ import net.okocraft.ttt.config.Messages;
 import net.okocraft.ttt.config.Settings;
 import net.okocraft.ttt.module.spawner.SpawnerItem;
 
-public class Get extends AbstractCommand {
+public class GetCommand extends AbstractCommand {
 
     private final TTT plugin;
 
-    public Get(TTT plugin) {
+    public GetCommand(TTT plugin) {
         super("get", "ttt.command.spawner.get", Set.of("g"));
         this.plugin = plugin;
     }

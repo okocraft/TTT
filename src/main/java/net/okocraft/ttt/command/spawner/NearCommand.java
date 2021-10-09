@@ -17,11 +17,11 @@ import net.okocraft.ttt.config.Messages;
 import net.okocraft.ttt.config.Settings;
 import net.okocraft.ttt.module.spawner.SpawnerState;
 
-public class Near extends AbstractCommand {
+public class NearCommand extends AbstractCommand {
 
     private final TTT plugin;
 
-    public Near(TTT plugin) {
+    public NearCommand(TTT plugin) {
         super("near", "ttt.command.spawner.near", Set.of("n"));
         this.plugin = plugin;
     }

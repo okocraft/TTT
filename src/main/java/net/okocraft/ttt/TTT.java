@@ -65,28 +65,7 @@ public class TTT extends JavaPlugin {
     public void onLoad() {
         Spawner.initialize(this);
 
-        try {
-            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
-            configuration.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load config.yml", e);
-        }
-
-        try {
-            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", playerData.getPath());
-            playerData.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load playerdata.yml", e);
-        }
-
-        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
-
-        try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
-            translationDirectory.load();
-        } catch (IOException e) {
-            getLogger().log(Level.SEVERE, "Could not load language files.", e);
-        }
+        reload();
 
         try {
             this.database = new Database(this);
@@ -160,5 +139,30 @@ public class TTT extends JavaPlugin {
 
     public WorldGuardAPI getWorldGuardAPI() {
         return worldGuardAPI;
+    }
+
+    public void reload() {
+        try {
+            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
+            configuration.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load config.yml", e);
+        }
+
+        try {
+            ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", playerData.getPath());
+            playerData.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load playerdata.yml", e);
+        }
+
+        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
+
+        try {
+            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
+            translationDirectory.load();
+        } catch (IOException e) {
+            getLogger().log(Level.SEVERE, "Could not load language files.", e);
+        }
     }
 }

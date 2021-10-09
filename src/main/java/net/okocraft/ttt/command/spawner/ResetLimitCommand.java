@@ -19,11 +19,11 @@ import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.command.AbstractCommand;
 import net.okocraft.ttt.config.Messages;
 
-public class ResetLimit extends AbstractCommand {
+public class ResetLimitCommand extends AbstractCommand {
 
     private final TTT plugin;
 
-    public ResetLimit(TTT plugin) {
+    public ResetLimitCommand(TTT plugin) {
         super("resetlimit", "ttt.command.spawner.resetlimit", Set.of("rl"));
         this.plugin = plugin;
         // /ttt spawner resetlimit <player> [world] [mobtype]
