@@ -35,9 +35,9 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
-import net.okocraft.ttt.config.Messages;
 import net.okocraft.ttt.config.worldsetting.spawner.IsolatingSetting;
 import net.okocraft.ttt.config.worldsetting.spawner.RedstoneSwitchesSetting;
+import net.okocraft.ttt.language.Messages;
 
 public class SpawnerListener implements Listener {
 

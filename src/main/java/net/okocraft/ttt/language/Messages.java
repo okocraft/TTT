@@ -1,5 +1,5 @@
   
-package net.okocraft.ttt.config;
+package net.okocraft.ttt.language;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;

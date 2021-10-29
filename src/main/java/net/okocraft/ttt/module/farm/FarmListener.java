@@ -18,10 +18,10 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
-import net.okocraft.ttt.config.Messages;
 import net.okocraft.ttt.config.worldsetting.farm.FarmAction;
 import net.okocraft.ttt.config.worldsetting.farm.FarmSetting;
 import net.okocraft.ttt.config.worldsetting.farm.FinderSetting;
+import net.okocraft.ttt.language.Messages;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.Condition;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.Field;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.LogEntity;

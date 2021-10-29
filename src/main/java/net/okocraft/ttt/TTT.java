@@ -137,7 +137,7 @@ public class TTT extends JavaPlugin {
 
     private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
         var japanese = "ja_JP.yml";
-        ResourceUtils.copyFromJar(getFile().toPath(), "ja_JP.yml", directory.resolve(japanese));
+        ResourceUtils.copyFromJar(getFile().toPath(), "languages/" + japanese, directory.resolve(japanese));
     }
 
     public Database getDatabase() {

@@ -2,7 +2,7 @@ package net.okocraft.ttt.command;
 
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.command.spawner.SpawnerCommand;
-import net.okocraft.ttt.config.Messages;
+import net.okocraft.ttt.language.Messages;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

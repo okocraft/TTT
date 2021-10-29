@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import net.okocraft.ttt.TTT;
-import net.okocraft.ttt.config.Messages;
+import net.okocraft.ttt.language.Messages;
 
 public class ReloadCommand extends AbstractCommand {
 
