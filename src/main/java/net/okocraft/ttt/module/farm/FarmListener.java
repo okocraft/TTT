@@ -1,12 +1,10 @@
 package net.okocraft.ttt.module.farm;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
-import com.github.siroshun09.configapi.api.Configuration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,8 +19,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.Messages;
-import net.okocraft.ttt.config.Settings;
-import net.okocraft.ttt.config.enums.FindFarmsAction;
+import net.okocraft.ttt.config.worldsetting.farm.FarmAction;
+import net.okocraft.ttt.config.worldsetting.farm.FarmSetting;
+import net.okocraft.ttt.config.worldsetting.farm.FinderSetting;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.Condition;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.Field;
 import net.okocraft.ttt.module.farm.EntityDeathLogTable.LogEntity;
@@ -30,13 +29,11 @@ import net.okocraft.ttt.module.farm.EntityDeathLogTable.LogEntity;
 public class FarmListener implements Listener {
 
     private final TTT plugin;
-    private final Configuration config;
     private final EntityDeathLogTable dataTable;
     private final Map<UUID, WrappedLocation> farmLocationsDetected = new HashMap<>();
     
     public FarmListener(TTT plugin) {
         this.plugin = plugin;
-        this.config = plugin.getConfiguration();
         this.dataTable = new EntityDeathLogTable(plugin.getDatabase());
     }
 
@@ -44,7 +41,9 @@ public class FarmListener implements Listener {
     private void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
 
-        if (config.get(Settings.FARM_PREVENT_CRAMMING_DEATH_DROP) && entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
+        FarmSetting farmSetting = plugin.getSetting().worldSetting(entity.getWorld()).farmSetting();
+
+        if (farmSetting.preventCrammingDeathDrop() && entity.getLastDamageCause().getCause() == DamageCause.CRAMMING) {
             event.setDroppedExp(0);
             event.getDrops().clear();
         }
@@ -74,9 +73,11 @@ public class FarmListener implements Listener {
                 deathLocation.getBlockZ()
         );
 
-        List<FindFarmsAction> farmActions = config.get(Settings.FARM_FINDER_FARM_ACTIONS)
-                .getOrDefault(spawnReason, new ArrayList<>());
-        int killingChumberRange = config.get(Settings.FARM_FINDER_KILLING_CHUMBER_RANGE);
+        FinderSetting finderSetting = farmSetting.finderSetting();
+
+        Collection<FarmAction> farmActions = finderSetting.farmActions().get(spawnReason);
+        int killingChumberRange = finderSetting.killingChumberRange();
+        
         Condition condition = new Condition(Field.SPAWN_REASON, spawnReason)
                 .and(Field.DEATH_WORLD_NAME, entity.getWorld())
                 .and(Field.DEATH_X_LOCATION, deathLocation.getBlockX() - killingChumberRange, deathLocation.getBlockX() + killingChumberRange)
@@ -85,15 +86,15 @@ public class FarmListener implements Listener {
         
         List<LogEntity> searchResults = dataTable.search(condition);
         
-        if (searchResults.size() >= config.get(Settings.FARM_FINDER_KILLED_MOBS_TO_BE_KILLING_CHUMBER)) {
-            for (FindFarmsAction action : farmActions) {
-                if (action == FindFarmsAction.CLEAR_DROP) {
+        if (searchResults.size() >= finderSetting.killedMobsToBeKillingChumber()) {
+            for (FarmAction action : farmActions) {
+                if (action == FarmAction.CLEAR_DROP) {
                     event.getDrops().clear();
                 }
-                if (action == FindFarmsAction.CLEAR_EXP) {
+                if (action == FarmAction.CLEAR_EXP) {
                     event.setDroppedExp(0);
                 }
-                if (action == FindFarmsAction.NOTIFY) {
+                if (action == FarmAction.NOTIFY) {
                     WrappedLocation deathLoc = WrappedLocation.of(log.getDeathLocation());
                     Bukkit.getOnlinePlayers().forEach(player -> {                        
                         if (player.hasPermission("ttt.notification.farmfound") && !farmLocationsDetected.containsKey(player.getUniqueId())) {

@@ -3,6 +3,8 @@ package net.okocraft.ttt.module.spawner;
 import java.util.List;
 import java.util.Locale;
 
+import com.github.siroshun09.configapi.api.Configuration;
+
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.Messages;
-import net.okocraft.ttt.config.Settings;
 
 public class SpawnerItem extends Spawner<ItemStack> {
 
@@ -72,8 +73,9 @@ public class SpawnerItem extends Spawner<ItemStack> {
                 type = EntityType.PIG;
             }
             dataContainer.set(entityKey, PersistentDataType.STRING, type.name());
-
-            int max = Settings.getMaxSpawnableMobs(TTT.getPlugin(TTT.class).getConfiguration(), null, type);
+            
+            int max = TTT.getPlugin(TTT.class).getConfiguration()
+                    .getInteger("world-setting.default.spawner.max-spawnable-mobs.DEFAULT", 100000);
             dataContainer.set(maxSpawnableMobsKey, PersistentDataType.INTEGER, max);
             dataContainer.set(spawnableMobsKey, PersistentDataType.INTEGER, max);
             spawner.setItemMeta(meta);
@@ -87,11 +89,11 @@ public class SpawnerItem extends Spawner<ItemStack> {
         SpawnerItem spawner = new SpawnerItem(item);
         if (!isValid(item)) {
             spawner.setSpawnedType(spawner.getSpawnedType());
-            spawner.setMaxSpawnableMobs(Settings.getMaxSpawnableMobs(
-                    plugin.getConfiguration(),
-                    null,
-                    spawner.getSpawnedType()
-            ));
+            Configuration config = TTT.getPlugin(TTT.class).getConfiguration();
+            int maxSpawnableMobs = config
+                    .getInteger("world-setting.default.spawner.max-spawnable-mobs." + spawner.getSpawnedType().name(), 
+                            config.getInteger("world-setting.default.spawner.max-spawnable-mobs.DEFAULT", 100000));
+            spawner.setMaxSpawnableMobs(maxSpawnableMobs);
             spawner.setSpawnableMobs(spawner.getSpawnableMobs());
         }
         return spawner;

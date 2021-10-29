@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.command.AbstractCommand;
 import net.okocraft.ttt.config.Messages;
-import net.okocraft.ttt.config.Settings;
 import net.okocraft.ttt.module.spawner.SpawnerState;
 
 public class NearCommand extends AbstractCommand {
@@ -39,16 +38,20 @@ public class NearCommand extends AbstractCommand {
 
         player.sendMessage(Messages.COMMAND_NEAR_HEADER);
 
+        int defaultRadius = plugin.getSetting()
+                .worldSetting(player.getWorld())
+                .spawnerSetting()
+                .isolatingSetting()
+                .radius();
         int radius;
         if (args.length >= 3) {
             try {
                 radius = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                radius = plugin.getConfiguration().get(Settings.SPAWNER_ISOLATING_RADIUS);
-                
+                radius = defaultRadius;
             }
         } else {
-            radius = plugin.getConfiguration().get(Settings.SPAWNER_ISOLATING_RADIUS);
+            radius = defaultRadius;
         }
         
         for (CreatureSpawner spawner : SpawnerState.getSpawnersIn(radius, player.getLocation())) {

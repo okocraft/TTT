@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -37,16 +36,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.Messages;
-import net.okocraft.ttt.config.Settings;
+import net.okocraft.ttt.config.worldsetting.spawner.IsolatingSetting;
+import net.okocraft.ttt.config.worldsetting.spawner.RedstoneSwitchesSetting;
 
 public class SpawnerListener implements Listener {
 
     private final TTT plugin;
-    private final YamlConfiguration config;
 
     public SpawnerListener(TTT plugin) {
         this.plugin = plugin;
-        this.config = plugin.getConfiguration();
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -79,8 +77,10 @@ public class SpawnerListener implements Listener {
                 if (playerData != null) {
                     minedSpawners = playerData.getInteger(state.getSpawnedType().name());
 
-                    int limit = Settings.getMaxMinableSpawners(config, block.getWorld(), state.getSpawnedType());
+                    int limit = plugin.getSetting().worldSetting(block.getWorld()).spawnerSetting()
+                            .maxMinableSpawners(state.getSpawnedType());
                     if (minedSpawners >= limit) {
+                        TTT.dbg("break cancelled due to mine limit");
                         event.setCancelled(true);
                         player.sendMessage(Messages.spawnerMineLimit(block.getWorld(), state.getSpawnedType(), limit));
                         return;
@@ -156,7 +156,8 @@ public class SpawnerListener implements Listener {
     }
 
     private void cancelEventIfNotIsolated(CreatureSpawner placed, BlockPlaceEvent event) {
-        if (!config.get(Settings.SPAWNER_ISOLATING_ENABLED)) {
+        IsolatingSetting isolating = plugin.getSetting().worldSetting(placed.getWorld()).spawnerSetting().isolatingSetting();
+        if (!isolating.enabled()) {
             return;
         }
 
@@ -167,7 +168,7 @@ public class SpawnerListener implements Listener {
             if (plot != null) {
                 Set<CreatureSpawner> spawners = new HashSet<>();
                 for (CreatureSpawner spawner : SpawnerState.getSpawnersIn(
-                        config.get(Settings.SPAWNER_ISOLATING_PLOTSQUARED_RADIUS), placed.getLocation())) {
+                        isolating.plotsquaredRadius(), placed.getLocation())) {
                     for (com.sk89q.worldedit.regions.CuboidRegion region : plot.getRegions()) {
                         if (region.contains(com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(spawner.getLocation())
                                 .toVector().toBlockPoint())) {
@@ -176,7 +177,7 @@ public class SpawnerListener implements Listener {
                     }
                 }
 
-                int maxSpawners = config.get(Settings.SPAWNER_ISOLATING_PLOTSQUARED_AMOUNT);
+                int maxSpawners = isolating.plotsquaredAmount();
                 if (spawners.size() > maxSpawners) {
                     event.setCancelled(true);
                     event.getPlayer().sendMessage(Messages.TOO_MANY_SPAWNERS_IN_PLOT.apply(maxSpawners));
@@ -186,15 +187,12 @@ public class SpawnerListener implements Listener {
         } catch (NoClassDefFoundError ignored) {
         }
 
-        int maxSpawners = config.get(Settings.SPAWNER_ISOLATING_AMOUNT);
-        int radius = config.get(Settings.SPAWNER_ISOLATING_RADIUS);
+        int maxSpawners = isolating.amount();
+        int radius = isolating.radius();
 
         if (SpawnerState.getSpawnersIn(radius, placed.getLocation()).size() > maxSpawners) {
             event.setCancelled(true);
-            event.getPlayer().sendMessage(Messages.TOO_MANY_SPAWNERS.apply(
-                    config.get(Settings.SPAWNER_ISOLATING_RADIUS),
-                    config.get(Settings.SPAWNER_ISOLATING_AMOUNT)
-            ));
+            event.getPlayer().sendMessage(Messages.TOO_MANY_SPAWNERS.apply(radius, maxSpawners));
             return;
         }
     }
@@ -226,8 +224,11 @@ public class SpawnerListener implements Listener {
 
         event.getPlayer().sendMessage(Messages.SHOWN_SPAWNER_STATUS.apply(SpawnerState.from(spawner)));
 
-        if (Settings.isRedstoneSpawnerSwitchEnabled(config, block.getWorld())) {
-            if (Settings.isRedstoneSpawnerSwitchReversed(config, block.getWorld())) {
+        RedstoneSwitchesSetting redstoneSwitches = plugin.getSetting().worldSetting(spawner.getWorld())
+                .spawnerSetting().redstoneSwitchesSetting();
+
+        if (redstoneSwitches.enabled()) {
+            if (redstoneSwitches.reversed()) {
                 event.getPlayer().sendMessage(Messages.SPAWNER_START_TIP);
             } else {
                 event.getPlayer().sendMessage(Messages.SPAWNER_STOP_TIP);
@@ -285,15 +286,18 @@ public class SpawnerListener implements Listener {
             public void run() {
                 for (BlockState tile : event.getChunk().getTileEntities()) {
                     if (tile instanceof CreatureSpawner spawner && !SpawnerState.isValid(spawner)) {
-                        Map<EntityType, Double> weightMap = Settings.getSpawnerTypeMapping(
-                                config,
-                                event.getWorld(),
-                                spawner.getSpawnedType()
-                        );
+                        Map<EntityType, Double> weightMap = plugin.getSetting()
+                                .worldSetting(event.getWorld())
+                                .spawnerSetting()
+                                .typeMapping()
+                                .column(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);
+                            TTT.dbg("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);
                             spawner.setSpawnedType(entityType);
                             spawner.update();
+                        } else {
+                            TTT.dbg("spawner at " + spawner.getLocation() + " cancelled weightMap enpty.");
                         }
                     }
                 }

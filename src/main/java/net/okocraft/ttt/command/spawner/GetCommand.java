@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.command.AbstractCommand;
 import net.okocraft.ttt.config.Messages;
-import net.okocraft.ttt.config.Settings;
 import net.okocraft.ttt.module.spawner.SpawnerItem;
 
 public class GetCommand extends AbstractCommand {
@@ -59,7 +58,11 @@ public class GetCommand extends AbstractCommand {
             } catch (NumberFormatException ignored) {}
         }
 
-        int maxSpawnableMobs = Settings.getMaxSpawnableMobs(plugin.getConfiguration(), player.getWorld(), type);
+        int maxSpawnableMobs = plugin.getSetting()
+                .worldSetting(player.getWorld())
+                .spawnerSetting()
+                .maxSpawnableMobs(type);
+
         ItemStack spawner = SpawnerItem.create(type, maxSpawnableMobs, maxSpawnableMobs).getWithLocale(player.locale());
         spawner.setAmount(amount);
         player.getInventory().addItem(spawner);

@@ -3,8 +3,6 @@ package net.okocraft.ttt.module.spawner;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.siroshun09.configapi.api.Configuration;
-
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,7 +14,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import net.okocraft.ttt.config.Settings;
+import net.okocraft.ttt.TTT;
+import net.okocraft.ttt.config.worldsetting.spawner.RedstoneSwitchesSetting;
 
 public class SpawnerState extends Spawner<CreatureSpawner> {
 
@@ -42,11 +41,10 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
     public static SpawnerState from(@NotNull CreatureSpawner creatureSpawner) {
         SpawnerState spawner = new SpawnerState(creatureSpawner);
         if (!isValid(creatureSpawner)) {
-            spawner.setMaxSpawnableMobs(Settings.getMaxSpawnableMobs(
-                    plugin.getConfiguration(),
-                    creatureSpawner.getWorld(),
-                    creatureSpawner.getSpawnedType()
-            ));
+            spawner.setMaxSpawnableMobs(TTT.getPlugin(TTT.class).getSetting()
+                    .worldSetting(creatureSpawner.getWorld())
+                    .spawnerSetting()
+                    .maxSpawnableMobs(spawner.getSpawnedType()));
             spawner.setSpawnableMobs(spawner.getSpawnableMobs());
         }
         return spawner;
@@ -97,10 +95,9 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
     }
 
     public boolean isRunning() {
-        Configuration config = plugin.getConfiguration();
-        return !Settings.isRedstoneSpawnerSwitchEnabled(config, spawner.getWorld())
-                || isBlockPowered(spawner.getBlock()) != Settings.isRedstoneSpawnerSwitchReversed(config,
-                        spawner.getWorld());
+        RedstoneSwitchesSetting redstoneSwitches = plugin.getSetting().worldSetting(spawner.getWorld())
+                .spawnerSetting().redstoneSwitchesSetting();
+        return !redstoneSwitches.enabled() || isBlockPowered(spawner.getBlock()) != redstoneSwitches.reversed();
     }
 
     private static boolean isBlockPowered(Block block) {
