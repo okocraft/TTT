@@ -174,4 +174,16 @@ public class TTT extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Could not load language files.", e);
         }
     }
+
+    /**
+     * Prints debug message on console.
+     * 
+     * @param debugMessage debug message
+     */
+    public static void debug(String debugMessage) {
+        TTT plugin = getPlugin(TTT.class);
+        if (plugin.getSetting().debug()) {
+            plugin.getLogger().info("[dbg] " + debugMessage);
+        }
+    }
 }

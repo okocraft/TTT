@@ -80,7 +80,7 @@ public class SpawnerListener implements Listener {
                     int limit = plugin.getSetting().worldSetting(block.getWorld()).spawnerSetting()
                             .maxMinableSpawners(state.getSpawnedType());
                     if (minedSpawners >= limit) {
-                        TTT.dbg("break cancelled due to mine limit");
+                        TTT.debug("break cancelled due to mine limit");
                         event.setCancelled(true);
                         player.sendMessage(Messages.spawnerMineLimit(block.getWorld(), state.getSpawnedType(), limit));
                         return;
@@ -293,11 +293,11 @@ public class SpawnerListener implements Listener {
                                 .column(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);
-                            TTT.dbg("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);
+                            TTT.debug("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);
                             spawner.setSpawnedType(entityType);
                             spawner.update();
                         } else {
-                            TTT.dbg("spawner at " + spawner.getLocation() + " cancelled weightMap enpty.");
+                            TTT.debug("spawner at " + spawner.getLocation() + " cancelled weightMap enpty.");
                         }
                     }
                 }
