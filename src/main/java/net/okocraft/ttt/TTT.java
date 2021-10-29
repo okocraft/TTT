@@ -8,6 +8,7 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPI;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
+import net.okocraft.ttt.config.RootSetting;
 import net.okocraft.ttt.module.farm.FarmListener;
 import net.okocraft.ttt.module.spawner.Spawner;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
@@ -57,6 +58,8 @@ public class TTT extends JavaPlugin {
     private final TranslationDirectory translationDirectory =
             TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
 
+    private RootSetting setting;
+
     private Database database;
 
     private WorldGuardAPI worldGuardAPI;
@@ -100,6 +103,10 @@ public class TTT extends JavaPlugin {
 
     public @NotNull YamlConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public RootSetting getSetting() {
+        return setting;
     }
 
     public @NotNull YamlConfiguration getPlayerData() {
@@ -148,6 +155,8 @@ public class TTT extends JavaPlugin {
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load config.yml", e);
         }
+
+        setting = RootSetting.DESERIALIZER.deserializeConfiguration(configuration);
 
         try {
             ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "playerdata.yml", playerData.getPath());

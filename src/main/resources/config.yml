@@ -1,150 +1,285 @@
-spawner:
-  # Only for this feature, when world uuid is changed, limit will be reset.
-  max-minable-spawners:
-    # world_name:
-    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
-    default:
-      DEFAULT: 2
-    resource:
-      ZOMBIE: 2
+world-setting:
+  default: # World name or default.
+    spawner:
 
-  max-spawnable-mobs:
-    # world_name:
-    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
-    default:
-      DEFAULT: 100000
-    resource:
-      ZOMBIE: 100000
+      # Max minable spawners per world.
+      # World is recognized by world uuid. Means if world uuid is changed,
+      # max-minable-spawners limit will be reset.
+      max-minable-spawners:
+        DEFAULT: 2 # Entity name or DEFAULT.
+        ZOMBIE: 2
+      
+      # How many mobs can be spawned by spawners.
+      max-spawnable-mobs:
+        DEFAULT: 100000
+        ZOMBIE: 100000
+      
+      # Limits spanwer amount in specific radius (circle)
+      # Only player placement will be affected.
+      isolating:
+        enabled: true
+        radius: 34
+        amount: 2
+        # If in plotsqured plot, spawners outside of plot are not counted for isolating limit.
+        plotsquared:
+          radius: 34
+          # Amount of spawner per plotsquared plot.
+          amount: 2
 
-  # Limits spanwer amount in specific radius (circle)
-  # Only player placement will be affected.
-  isolating:
-    enabled: true
-    radius: 34
-    amount: 2
-    # If in plotsqured plot, spawners outside of plot are not counted for isolating limit.
-    plotsquared:
-      radius: 34
-      # Amount of spawner per plotsquared plot.
-      amount: 2
-  
-  # Spawners that is not placed by player, in other word, spawners that do not have any data
-  # of this plugin are not affected by redstone.
-  redstone-switches-spawner:
-    default:
-      # If enabled false, redstone power will not affect spawners.
-      # reversed value are ignored at the situation. 
-      enabled: false
-      # If reversed is false, spawners will stop when redstone powered.
-      # If true, spawners will start when redstone powered.
-      reversed: false
-    world:
-      enabled: false
-      reversed: false
-    tt:
-      enabled: true
-      reversed: true
+      # Spawners that is not placed by player, in other word, spawners that do not have any data
+      # of this plugin are not affected by redstone.
+      redstone-switches-spawner:
+        # If enabled false, redstone power will not affect spawners.
+        # reversed value are ignored at the situation. 
+        enabled: false
+        # If reversed is false, spawners will stop when redstone powered.
+        # If true, spawners will start when redstone powered.
+        reversed: false
 
-  # This feature adds other entity type for spawner on chunk population.
-  # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
-  # An number for each mapped type is weight. Higher number, more likely to be chosen.
-  type-mapping:
-    # world_name:
-    #   ENTITY_TYPE_NAME: <number> # Note that ENTITY_TYPE_NAME cannot be DEFAULT in this section
-    default:
-      ZOMBIE:
-        ZOMBIE: 3
-        DROWNED: 2
-        HUSK: 2
-        PHANTOM: 1
-        GUARDIAN: 1
-        CREEPER: 1
-      SKELETON:
-        SKELETON: 6
-        STRAY: 6
-        WITCH: 4
-        ENDERMAN: 1
-        SHULKER: 1
-      SPIDER:
-        CAVE_SPIDER: 1
-        SPIDER: 2
-      CAVE_SPIDER:
-        CAVE_SPIDER: 1
-        SPIDER: 2
-      SILVERFISH:
-        SILVERFISH: 2
-        ENDERMITE: 1
-    resource_nether:
-      BLAZE:
-        BLAZE: 10
-        STRIDER: 5
-        HOGLIN: 3
-        ZOGLIN: 3
-        ZOMBIFIED_PIGLIN: 3
-        PIGLIN: 3
-        PIGLIN_BRUTE: 2
-        GHAST: 2
-      MAGMA_CUBE:
-        MAGMA_CUBE: 2
-        SLIME: 1
+      # This feature adds other entity type for spawner on chunk population.
+      # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
+      # An number for each mapped type is weight. Higher number, more likely to be chosen.
+      type-mapping:
+        ZOMBIE:
+          ZOMBIE: 3
+          DROWNED: 2
+          HUSK: 2
+          PHANTOM: 1
+          GUARDIAN: 1
+          CREEPER: 1
+        SKELETON:
+          SKELETON: 6
+          STRAY: 6
+          WITCH: 4
+          ENDERMAN: 1
+          SHULKER: 1
+        SPIDER:
+          CAVE_SPIDER: 1
+          SPIDER: 2
+        CAVE_SPIDER:
+          CAVE_SPIDER: 1
+          SPIDER: 2
+        SILVERFISH:
+          SILVERFISH: 2
+          ENDERMITE: 1
+        BLAZE:
+          BLAZE: 10
+          STRIDER: 5
+          HOGLIN: 3
+          ZOGLIN: 3
+          ZOMBIFIED_PIGLIN: 3
+          PIGLIN: 3
+          PIGLIN_BRUTE: 2
+          GHAST: 2
+        MAGMA_CUBE:
+          MAGMA_CUBE: 2
+          SLIME: 1
+    farm:
+      # If true, stops entity death drop when the entity's death reason is cramming.
+      prevent-cramming-death-drop: true
 
-farm:
-  # If true, stops entity death drop when the entity's death reason is cramming. 
-  prevent-cramming-death-drop: true
+      # Find mob farms.
+      # If spawn reason includes BLEEDING,
+      # you can also find normal farm which is not grinder.
+      finder:
+        killing-chumber-range: 2
+        # Amount of killed mobs to consider the location as killing-chumber in the range specified above.
+        killed-mobs-to-be-killing-chumber: 30
+        farm-actions:
+          SPAWNER: []
+          NATURAL:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          NETHER_PORTAL:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          PATROL:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          VILLAGE_DEFENSE:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          VILLAGE_INVASION:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          RAID:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
+          SLIME_SPLIT:
+            - CLEAR_DROP
+            - CLEAR_EXP
+            - NOTIFY
 
-  # Find mob farms.
-  # If spawn reason includes BLEEDING,
-  # you can also find normal farm which is not grinder.
-  finder:
-    enabled: true
-    killing-chumber-range: 2
-    # Amount of killed mobs to consider the location as killing-chumber in the range specified above.
-    killed-mobs-to-be-killing-chumber: 30
-    farm-actions:
-      SPAWNER: []
-      NATURAL:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      NETHER_PORTAL:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      PATROL:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      VILLAGE_DEFENSE:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      VILLAGE_INVASION:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      RAID:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
-      SLIME_SPLIT:
-        - CLEAR_DROP
-        - CLEAR_EXP
-        - NOTIFY
+    anti-clickbot:
+      # Available types are: SUMMON_ENEMY, CANCEL, KILL, KICK, CALL_ADMIN
+      # SUMMON_ENEMY will spawn or teleport (nearest) agressive mobs
+      # CANCEL will cancel clicks
+      # KILL will kill clicking player
+      # KICK will kick clicking player
+      # CALL_ADMIN will notify admins that click bot is used.
+      type: SUMMON_ENEMY
+      warn-before: true
+      warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
 
-  # Stack mobs.
-  mob-stacker:
-    enabled: true
-    target-spawn-reason:
-      - SPAWNER
-
-anti-clickbot:
-  enabled: true
-  # Available types are: SUMMON_ENEMY, CANCEL, KILL, KICK, CALL_ADMIN
-  # SUMMON_ENEMY will teleport nearest agressive mobs
-  # CANCEL will cancel clicks
-  # KILL will kill clicking player
-  # KICK will kick clicking player
-  # CALL_ADMIN will notify admins that click bot is used.
-  type: SUMMON_ENEMY
-  warn-before: true
-  warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
+#spawner:
+#  # Only for this feature, when world uuid is changed, limit will be reset.
+#  max-minable-spawners:
+#    # world_name:
+#    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
+#    default:
+#      DEFAULT: 2
+#    resource:
+#      ZOMBIE: 2
+#
+#  max-spawnable-mobs:
+#    # world_name:
+#    #   ENTITY_TYPE_NAME_OR_DEFAULT: <number>
+#    default:
+#      DEFAULT: 100000
+#    resource:
+#      ZOMBIE: 100000
+#
+#  # Limits spanwer amount in specific radius (circle)
+#  # Only player placement will be affected.
+#  isolating:
+#    enabled: true
+#    radius: 34
+#    amount: 2
+#    # If in plotsqured plot, spawners outside of plot are not counted for isolating limit.
+#    plotsquared:
+#      radius: 34
+#      # Amount of spawner per plotsquared plot.
+#      amount: 2
+#  
+#  # Spawners that is not placed by player, in other word, spawners that do not have any data
+#  # of this plugin are not affected by redstone.
+#  redstone-switches-spawner:
+#    default:
+#      # If enabled false, redstone power will not affect spawners.
+#      # reversed value are ignored at the situation. 
+#      enabled: false
+#      # If reversed is false, spawners will stop when redstone powered.
+#      # If true, spawners will start when redstone powered.
+#      reversed: false
+#    world:
+#      enabled: false
+#      reversed: false
+#    tt:
+#      enabled: true
+#      reversed: true
+#
+#  # This feature adds other entity type for spawner on chunk population.
+#  # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
+#  # An number for each mapped type is weight. Higher number, more likely to be chosen.
+#  type-mapping:
+#    # world_name:
+#    #   ENTITY_TYPE_NAME: <number> # Note that ENTITY_TYPE_NAME cannot be DEFAULT in this section
+#    default:
+#      ZOMBIE:
+#        ZOMBIE: 3
+#        DROWNED: 2
+#        HUSK: 2
+#        PHANTOM: 1
+#        GUARDIAN: 1
+#        CREEPER: 1
+#      SKELETON:
+#        SKELETON: 6
+#        STRAY: 6
+#        WITCH: 4
+#        ENDERMAN: 1
+#        SHULKER: 1
+#      SPIDER:
+#        CAVE_SPIDER: 1
+#        SPIDER: 2
+#      CAVE_SPIDER:
+#        CAVE_SPIDER: 1
+#        SPIDER: 2
+#      SILVERFISH:
+#        SILVERFISH: 2
+#        ENDERMITE: 1
+#    resource_nether:
+#      BLAZE:
+#        BLAZE: 10
+#        STRIDER: 5
+#        HOGLIN: 3
+#        ZOGLIN: 3
+#        ZOMBIFIED_PIGLIN: 3
+#        PIGLIN: 3
+#        PIGLIN_BRUTE: 2
+#        GHAST: 2
+#      MAGMA_CUBE:
+#        MAGMA_CUBE: 2
+#        SLIME: 1
+#
+#farm:
+#  # world
+#  default:
+#    # If true, stops entity death drop when the entity's death reason is cramming. 
+#    prevent-cramming-death-drop: true
+#
+#    # Find mob farms.
+#    # If spawn reason includes BLEEDING,
+#    # you can also find normal farm which is not grinder.
+#    finder:
+#      killing-chumber-range: 2
+#      # Amount of killed mobs to consider the location as killing-chumber in the range specified above.
+#      killed-mobs-to-be-killing-chumber: 30
+#      farm-actions:
+#        SPAWNER: []
+#        NATURAL:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        NETHER_PORTAL:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        PATROL:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        VILLAGE_DEFENSE:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        VILLAGE_INVASION:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        RAID:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#        SLIME_SPLIT:
+#          - CLEAR_DROP
+#          - CLEAR_EXP
+#          - NOTIFY
+#
+#    # Stack mobs.
+#    mob-stacker:
+#      target-spawn-reason:
+#        - SPAWNER
+#
+#  # Extends other properties from default section automatically.
+#  tt:
+#    finder:
+#      farm-actions:
+#        SLIME_SPLIT: []
+#
+#anti-clickbot:
+#  default:
+#    # Available types are: SUMMON_ENEMY, CANCEL, KILL, KICK, CALL_ADMIN
+#    # SUMMON_ENEMY will spawn or teleport (nearest) agressive mobs
+#    # CANCEL will cancel clicks
+#    # KILL will kill clicking player
+#    # KICK will kick clicking player
+#    # CALL_ADMIN will notify admins that click bot is used.
+#    type: SUMMON_ENEMY
+#    warn-before: true
+#    warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
