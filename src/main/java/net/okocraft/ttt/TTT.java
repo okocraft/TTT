@@ -62,6 +62,8 @@ public class TTT extends JavaPlugin {
 
     private Database database;
 
+    private DiscordMessenger discord;
+
     private WorldGuardAPI worldGuardAPI;
 
     @Override
@@ -148,6 +150,10 @@ public class TTT extends JavaPlugin {
         return worldGuardAPI;
     }
 
+    public DiscordMessenger getDiscord() {
+        return discord;
+    }
+
     public void reload() {
         try {
             ResourceUtils.copyFromJarIfNotExists(getFile().toPath(), "config.yml", configuration.getPath());
@@ -173,6 +179,8 @@ public class TTT extends JavaPlugin {
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load language files.", e);
         }
+
+        discord = new DiscordMessenger(this);
     }
 
     /**

@@ -15,7 +15,7 @@ public class RootSetting {
 
     public static final RootSettingSerializer DESERIALIZER = new RootSettingSerializer();
 
-    public static RootSetting DEFAULT_SETTING = new RootSetting(false);
+    public static RootSetting DEFAULT_SETTING = new RootSetting(false, "");
 
     /**
      * The value of {@code Configuration.getSection("world-setting");}
@@ -27,19 +27,26 @@ public class RootSetting {
 
     private final boolean debug;
 
+    private final String discordWebhookUrl;
+
     private final Map<World, WorldSetting> worldSettings = new HashMap<>();
 
-    private RootSetting(boolean debug) {
-        this(null, debug);
+    private RootSetting(boolean debug, String discordWebhookUrl) {
+        this(null, debug, discordWebhookUrl);
     }
 
-    public RootSetting(Configuration configWorldSettings, boolean debug) {
+    public RootSetting(Configuration configWorldSettings, boolean debug, String discordWebhookUrl) {
         this.configWorldSettings = configWorldSettings;
         this.debug = debug;
+        this.discordWebhookUrl = discordWebhookUrl;
     }
 
     public boolean debug() {
         return debug;
+    }
+
+    public String discordWebhookUrl() {
+        return discordWebhookUrl;
     }
     
     public @NotNull WorldSetting worldSetting(@NotNull World world) {

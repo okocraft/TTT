@@ -1,4 +1,5 @@
 debug: false
+discord-webhook-url: ""
 
 world-setting:
   default: # World name or default.

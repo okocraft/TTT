@@ -18,8 +18,9 @@ public class RootSettingSerializer implements ConfigurationSerializer<RootSettin
     public @NotNull RootSetting deserializeConfiguration(@NotNull Configuration config) {
         Configuration configWorldSettings = config.getSection("world-setting");
         boolean debug = config.getBoolean("debug");
+        String discordWebhookUrl = config.getString("discord-webhook-url");
 
-        return new RootSetting(configWorldSettings, debug);
+        return new RootSetting(configWorldSettings, debug, discordWebhookUrl);
     }
 
 }

@@ -3,6 +3,7 @@ package net.okocraft.ttt.module.farm;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,6 +18,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.translation.GlobalTranslator;
 import net.okocraft.ttt.TTT;
 import net.okocraft.ttt.config.worldsetting.farm.FarmAction;
 import net.okocraft.ttt.config.worldsetting.farm.FarmSetting;
@@ -99,7 +103,13 @@ public class FarmListener implements Listener {
                     Bukkit.getOnlinePlayers().forEach(player -> {                        
                         if (player.hasPermission("ttt.notification.farmfound") && !farmLocationsDetected.containsKey(player.getUniqueId())) {
                             farmLocationsDetected.put(player.getUniqueId(), deathLoc);
-                            player.sendMessage(Messages.FARM_IS_DETECTED.apply(log));
+                            Component farmIsDetectedMessage = Messages.FARM_IS_DETECTED.apply(log);
+                            player.sendMessage(farmIsDetectedMessage);
+                            plugin.getDiscord().send(
+                                    PlainTextComponentSerializer.plainText().serialize(
+                                            GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
+                                    )
+                            );
                         }
                     });
                 }
