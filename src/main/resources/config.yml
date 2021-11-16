@@ -134,7 +134,7 @@ world-setting:
       # In this time, players cannot hit mobs.
       # And if players cannot verify in this time, they will be punished.
       # in second.
-      verification-timeout: 30
+      verification-timeout: 60
       # Available punishments are:
       # SUMMON_ENEMY will spawn or teleport (nearest) agressive mobs. If plugin cannot do this, kick clicking player.
       # KICK will kick clicking player

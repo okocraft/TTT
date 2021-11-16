@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +19,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import io.papermc.paper.text.PaperComponents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.translation.GlobalTranslator;
@@ -35,7 +36,7 @@ public class FarmListener implements Listener {
 
     private final TTT plugin;
     private final EntityDeathLogTable dataTable;
-    private final Map<UUID, WrappedLocation> farmLocationsDetected = new HashMap<>();
+    private final Map<CommandSender, WrappedLocation> farmLocationsDetected = new HashMap<>();
     
     public FarmListener(TTT plugin) {
         this.plugin = plugin;
@@ -102,15 +103,21 @@ public class FarmListener implements Listener {
                 }
                 if (action == FarmAction.NOTIFY) {
                     Component farmIsDetectedMessage = Messages.FARM_IS_DETECTED.apply(log);
-                    plugin.getDiscord().send(
-                            PlainTextComponentSerializer.plainText().serialize(
-                                    GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
-                            )
-                    );
                     WrappedLocation deathLoc = WrappedLocation.of(log.getDeathLocation());
+                    if (!farmLocationsDetected.containsKey(Bukkit.getConsoleSender())) {
+                        farmLocationsDetected.put(Bukkit.getConsoleSender(), deathLoc);
+                        plugin.getDiscord().send(
+                                PaperComponents.plainSerializer().serialize(
+                                        GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
+                                )
+                                // PlainTextComponentSerializer.plainText().serialize(
+                                //         GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
+                                // )
+                        );
+                    }
                     Bukkit.getOnlinePlayers().forEach(player -> {                        
-                        if (player.hasPermission("ttt.notification.farmfound") && !farmLocationsDetected.containsKey(player.getUniqueId())) {
-                            farmLocationsDetected.put(player.getUniqueId(), deathLoc);
+                        if (player.hasPermission("ttt.notification.farmfound") && !farmLocationsDetected.containsKey(player)) {
+                            farmLocationsDetected.put(player, deathLoc);
                             player.sendMessage(farmIsDetectedMessage);
                         }
                     });

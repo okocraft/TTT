@@ -14,6 +14,7 @@ import net.okocraft.ttt.module.spawner.SpawnerState;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.CreatureSpawner;
@@ -134,19 +135,29 @@ public final class Messages {
                     .build();
 
     public static final Function<LogEntity, Component> FARM_IS_DETECTED =
-            log -> translatable()
-                    .key("farm-is-detected")
-                    .args(translatable(log.entity()), text(
-                            log.deathWorldName() + "/" +
-                            log.deathXLocation() + "/" +
-                            log.deathYLocation() + "/" +
-                            log.deathZLocation()
-                    ))
-                    .color(GRAY)
-                    .decoration(TextDecoration.ITALIC, State.FALSE)
-                    .clickEvent(ClickEvent.suggestCommand("/tp " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation()))
-                    .hoverEvent(HoverEvent.showText(text("/tp " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation())))
-                    .build();
+            (log) -> {
+                String worldName;
+                if (Bukkit.getWorlds().get(0).getName().equals(log.deathWorldName())) {
+                    worldName = "overworld";
+                } else {
+                    worldName = log.deathWorldName();
+                }
+                String command = "/execute in minecraft:" + worldName + " run tp @s " + log.deathXLocation() + " " + log.deathYLocation() + " " + log.deathZLocation();
+                return translatable()
+                        .key("farm-is-detected")
+                        .args(translatable(log.entity()), text(
+                                log.deathWorldName() + " " +
+                                log.deathXLocation() + " " +
+                                log.deathYLocation() + " " +
+                                log.deathZLocation()
+                        ))
+                        .append(Component.newline())
+                        .append(text(command))
+                        .color(GRAY)
+                        .clickEvent(ClickEvent.suggestCommand(command))
+                        .hoverEvent(HoverEvent.showText(text(command)))
+                        .build();
+            };
 
     public static final Function<SpawnerItem, Component> SPAWNER_LORE =
             spawner -> translatable()

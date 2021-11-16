@@ -17,7 +17,9 @@ public class DiscordMessenger {
 
     public void send(String message) {
         if (webhook != null) {
-            webhook.send(message);
+            for (String line : message.split("\r\n|\r|\n")) {
+                webhook.send(line);
+            }
         }
     }
 
