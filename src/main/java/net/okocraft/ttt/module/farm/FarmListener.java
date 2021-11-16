@@ -56,13 +56,11 @@ public class FarmListener implements Listener {
         if (spawnReason == null) {
             return;
         }
-        TTT.debug(spawnReason.toString());
 
         Location spawnLocation = entity.getOrigin();
         if (spawnLocation == null) {
             return;
         }
-        TTT.debug(spawnLocation.toString());
         Location deathLocation = entity.getLocation();
         LogEntity log = new LogEntity(
                 System.currentTimeMillis(),
@@ -93,9 +91,7 @@ public class FarmListener implements Listener {
         List<LogEntity> searchResults = dataTable.search(condition);
         
         if (searchResults.size() >= finderSetting.killedMobsToBeKillingChumber()) {
-            TTT.debug("action.");
             for (FarmAction action : farmActions) {
-                TTT.debug("action: " + action.name());
                 if (action == FarmAction.CLEAR_DROP) {
                     event.getDrops().clear();
                 }
@@ -119,7 +115,6 @@ public class FarmListener implements Listener {
                 }
             }
         } else {
-            TTT.debug("inserted.");
             new BukkitRunnable(){
                 public void run() { dataTable.insert(log); }
             }.runTaskAsynchronously(plugin);

@@ -24,12 +24,10 @@ import net.okocraft.ttt.language.Messages;
 public class AntiClickBotListener implements Listener {
 
     private static final Map<UUID, String> WAITING_VERIFICATION = new HashMap<>();
+    private static final Map<UUID, KillLog> KILL_LOGS = new HashMap<>();
     
     private final TTT plugin;
 
-    private final Map<UUID, KillLog> killLogs = new HashMap<>();
-    
-    
     public AntiClickBotListener(TTT plugin) {
         this.plugin = plugin;
     }
@@ -40,8 +38,12 @@ public class AntiClickBotListener implements Listener {
         if (player == null) {
             return;
         }
+        if (WAITING_VERIFICATION.containsKey(player.getUniqueId())) {
+            event.setCancelled(true);
+            return;
+        }
         
-        KillLog log = killLogs.computeIfAbsent(
+        KillLog log = KILL_LOGS.computeIfAbsent(
                 player.getUniqueId(),
                 uid -> new KillLog(1, player.getLocation(), System.currentTimeMillis())
         );
@@ -98,6 +100,7 @@ public class AntiClickBotListener implements Listener {
                     }
 
                     WAITING_VERIFICATION.remove(player.getUniqueId());
+                    KILL_LOGS.remove(player.getUniqueId());
 
                 }
             }.runTaskLater(plugin, 20L * setting.verificationTimeout());
@@ -120,7 +123,7 @@ public class AntiClickBotListener implements Listener {
     private void onQuit(PlayerQuitEvent event) {
         UUID playerUid = event.getPlayer().getUniqueId();
         WAITING_VERIFICATION.remove(playerUid);
-        killLogs.remove(playerUid);
+        KILL_LOGS.remove(playerUid);
     }
 
     public static String getVerificationString(UUID playerUid) {
@@ -136,6 +139,7 @@ public class AntiClickBotListener implements Listener {
         }
 
         WAITING_VERIFICATION.remove(playerUid);
+        KILL_LOGS.remove(playerUid);
         return true;
     }
 

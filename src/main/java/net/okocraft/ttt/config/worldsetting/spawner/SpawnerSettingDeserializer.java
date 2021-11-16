@@ -65,7 +65,9 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         var map = new HashMap<EntityType, Integer>(keys.size());
 
         for (var key : keys) {
-            toEntityType(key).ifPresent(type -> map.put(type, section.getInteger(key)));
+            if (!key.equalsIgnoreCase("DEFAULT")) {
+                toEntityType(key).ifPresent(type -> map.put(type, section.getInteger(key)));
+            }
         }
 
         return map;

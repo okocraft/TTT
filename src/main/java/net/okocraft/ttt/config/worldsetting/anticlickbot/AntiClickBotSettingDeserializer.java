@@ -17,17 +17,17 @@ public class AntiClickBotSettingDeserializer implements ConfigurationSerializer<
 
     @Override
     public @NotNull AntiClickBotSetting deserializeConfiguration(@NotNull Configuration config) {
-        int distanceThreshold = config.getInteger("anti-clickbot.distance-threshold");
-        int killCountThreshold = config.getInteger("anti-clickbot.kill-count-threshold");
-        int varificationTimeout = config.getInteger("anti-clickbot.varification-timeout");
+        int distanceThreshold = config.getInteger("distance-threshold");
+        int killCountThreshold = config.getInteger("kill-count-threshold");
+        int verificationTimeout = config.getInteger("verification-timeout");
         Punishment punishment;
         try {
-            punishment = Punishment.valueOf(config.getString("anti-clickbot.punishment"));
+            punishment = Punishment.valueOf(config.getString("punishment"));
         } catch (IllegalArgumentException e) {
             punishment = Punishment.SUMMON_ENEMY;
         }
 
-        return new AntiClickBotSetting(distanceThreshold, killCountThreshold, varificationTimeout, punishment);
+        return new AntiClickBotSetting(distanceThreshold, killCountThreshold, verificationTimeout, punishment);
     }
 
 }
