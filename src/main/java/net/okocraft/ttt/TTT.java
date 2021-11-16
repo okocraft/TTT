@@ -9,6 +9,7 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
 import net.okocraft.ttt.config.RootSetting;
+import net.okocraft.ttt.module.anticlickbot.AntiClickBotListener;
 import net.okocraft.ttt.module.farm.FarmListener;
 import net.okocraft.ttt.module.spawner.Spawner;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
@@ -89,6 +90,7 @@ public class TTT extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new SpawnerListener(this), this);
         getServer().getPluginManager().registerEvents(new FarmListener(this), this);
+        getServer().getPluginManager().registerEvents(new AntiClickBotListener(this), this);
 
         try {
             worldGuardAPI = new WorldGuardAPIImpl();

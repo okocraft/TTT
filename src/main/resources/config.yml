@@ -77,6 +77,7 @@ world-setting:
         MAGMA_CUBE:
           MAGMA_CUBE: 2
           SLIME: 1
+    
     farm:
       # If true, stops entity death drop when the entity's death reason is cramming.
       prevent-cramming-death-drop: true
@@ -119,13 +120,25 @@ world-setting:
             - CLEAR_EXP
             - NOTIFY
 
+    # Check player location and kill count on every mob killing.
+    # If player do not verify their existance
+    # by typing command /ttt verify <random-string> in specified time limit.
+    # Punishment specified will be executed.
     anti-clickbot:
-      # Available types are: SUMMON_ENEMY, CANCEL, KILL, KICK, CALL_ADMIN
-      # SUMMON_ENEMY will spawn or teleport (nearest) agressive mobs
-      # CANCEL will cancel clicks
-      # KILL will kill clicking player
+      # Distance threshold to increment player kill count.
+      distance-threshold: 3
+      # Kill count threshold. When player killed mob this kill count times, players needs to be verified.
+      # To verify, players should type command /ttt verify <random-string>
+      kill-count-threshold: 150
+      # Players are given this time limit to verify.
+      # In this time, players cannot hit mobs.
+      # And if players cannot verify in this time, they will be punished.
+      # in second.
+      varification-timeout: 30
+      # Available punishments are:
+      # SUMMON_ENEMY will spawn or teleport (nearest) agressive mobs. If plugin cannot do this, kick clicking player.
       # KICK will kick clicking player
-      # CALL_ADMIN will notify admins that click bot is used.
-      type: SUMMON_ENEMY
-      warn-before: true
-      warn-message: "You are using auto clicking tools. If you continue to use this, something bad will happen to you!"
+      # KILL will kill clicking player
+      # BAN will ban clicking player. Even if server has custom ban plugin, this plugin use minecraft ban.
+      punishment: SUMMON_ENEMY
+      

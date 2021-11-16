@@ -155,6 +155,13 @@ public final class Messages {
                     .decoration(TextDecoration.ITALIC, State.FALSE)
                     .build();
 
+    public static final BiFunction<String, Integer, Component> VERIFY_CLICK_BOT =
+            (randomString, verificationTimeout) -> translatable()
+                    .key("verify-clickbot")
+                    .args(text(randomString), text(verificationTimeout))
+                    .color(RED)
+                    .build();
+
     private Messages() {
         throw new UnsupportedOperationException();
     }

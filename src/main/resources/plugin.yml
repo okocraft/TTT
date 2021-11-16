@@ -55,9 +55,9 @@ permissions:
     description: Permission for `/ttt spawner modify` command.
     default: op
 
-  ttt.command.farms:
-    description: Permission for `/ttt farms` command.
-    default: op
+  ttt.command.verify:
+    description: Permission for `/ttt verify <string>` command.
+    default: true
 
   ttt.notification.farmfound:
     description: Permission to receive find-farm message.
