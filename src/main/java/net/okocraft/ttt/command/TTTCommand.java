@@ -28,7 +28,8 @@ public class TTTCommand extends AbstractCommand implements CommandExecutor, TabC
         super("ttt", "ttt.command", Collections.emptySet());
         this.subCommands = List.of(
             new SpawnerCommand(plugin),
-            new ReloadCommand(plugin)
+            new ReloadCommand(plugin),
+            new VerifyCommand(plugin)
         );
     }
 
