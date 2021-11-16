@@ -25,6 +25,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.LIGHT_PURPLE;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 
 public final class Messages {
 
@@ -161,6 +162,12 @@ public final class Messages {
                     .args(text(randomString), text(verificationTimeout))
                     .color(RED)
                     .build();
+
+    public static final Component COMMAND_VERIFY_FAIL =
+            PREFIX.toBuilder().append(translatable("command.verify.fail", RED)).build();
+
+    public static final Component COMMAND_VERIFY_SUCCESS =
+            PREFIX.toBuilder().append(translatable("command.verify.success", GREEN)).build();
 
     private Messages() {
         throw new UnsupportedOperationException();

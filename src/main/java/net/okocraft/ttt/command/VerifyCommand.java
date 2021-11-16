@@ -34,7 +34,11 @@ public class VerifyCommand extends AbstractCommand {
             return;
         }
         
-        if (AntiClickBotListener.inputVerification(((Player) sender).getUniqueId(), args[1].toLowerCase(Locale.ROOT)));
+        if (AntiClickBotListener.inputVerification(((Player) sender).getUniqueId(), args[1].toLowerCase(Locale.ROOT))) {
+            sender.sendMessage(Messages.COMMAND_VERIFY_SUCCESS);
+        } else {
+            sender.sendMessage(Messages.COMMAND_VERIFY_FAIL);
+        }
     }
 
     @Override

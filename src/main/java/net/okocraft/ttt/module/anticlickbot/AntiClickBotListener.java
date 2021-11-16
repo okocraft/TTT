@@ -38,7 +38,10 @@ public class AntiClickBotListener implements Listener {
         if (player == null) {
             return;
         }
-        if (WAITING_VERIFICATION.containsKey(player.getUniqueId())) {
+        AntiClickBotSetting setting = plugin.getSetting().worldSetting(player.getWorld()).antiClickBotSetting();
+        String randomString = getVerificationString(player.getUniqueId());
+        if (!randomString.isEmpty()) {
+            player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, setting.verificationTimeout()));
             event.setCancelled(true);
             return;
         }
@@ -48,24 +51,21 @@ public class AntiClickBotListener implements Listener {
                 uid -> new KillLog(1, player.getLocation(), System.currentTimeMillis())
         );
 
-        AntiClickBotSetting setting = plugin.getSetting().worldSetting(player.getWorld()).antiClickBotSetting();
         int distanceThreshold = setting.distanceThreshold();
-        if (log.killCount() > 1) {
-            if (log.location().distanceSquared(player.getLocation()) > distanceThreshold * distanceThreshold) {
-                log.killCount(0);
-            }
-            log.killCount(log.killCount() + 1);
-            log.location(player.getLocation());
+        if (log.location().distanceSquared(player.getLocation()) > distanceThreshold * distanceThreshold) {
+            log.killCount(0);
         }
+        log.killCount(log.killCount() + 1);
+        log.location(player.getLocation());
 
         if (log.killCount() > setting.killCountThreshold()) {
-            String randomString = randomAlphanumeric(3);
+            randomString = randomAlphanumeric(3);
             WAITING_VERIFICATION.put(player.getUniqueId(), randomString);
             player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, setting.verificationTimeout()));
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    if (!WAITING_VERIFICATION.containsKey(player.getUniqueId())) {
+                    if (getVerificationString(player.getUniqueId()).isEmpty()) {
                         return;
                     }
 
@@ -82,12 +82,12 @@ public class AntiClickBotListener implements Listener {
                     default:
                         boolean success = false;
                         for (Entity entity : player.getWorld().getNearbyEntities(player.getLocation(), 64, 64, 64)) {
-                            if (entity instanceof Monster) {
-                                if (!entity.hasGravity() || entity.getCustomName() != null || !entity.isDead() || !entity.isGlowing() || !entity.isInsideVehicle() || !entity.isInvulnerable() || !entity.isSilent()) {
+                            if (entity instanceof Monster monster) {
+                                if (!monster.hasGravity() || monster.getCustomName() != null || monster.isDead() || monster.isGlowing() || monster.isInsideVehicle() || monster.isInvulnerable() || monster.isSilent() || !monster.hasAI() || monster.isVisualFire()) {
                                     continue;
                                 }
 
-                                if (entity.teleport(player)) {
+                                if (monster.teleport(player)) {
                                     success = true;
                                     break;
                                 }
@@ -114,7 +114,9 @@ public class AntiClickBotListener implements Listener {
             return;
         }
 
-        if (!getVerificationString(player.getUniqueId()).isEmpty()) {
+        String randomString = getVerificationString(player.getUniqueId());
+        if (!randomString.isEmpty()) {
+            player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, plugin.getSetting().worldSetting(player.getWorld()).antiClickBotSetting().verificationTimeout()));
             event.setCancelled(true);
         }
     }
