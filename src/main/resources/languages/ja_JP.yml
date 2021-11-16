@@ -27,3 +27,4 @@ command:
   verify:
     fail: "認証に失敗しました。再度お試しください。"
     success: "認証に成功しました。"
+  reload: "設定が再読込されました。"

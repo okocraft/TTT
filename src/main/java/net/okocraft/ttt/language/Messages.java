@@ -180,6 +180,9 @@ public final class Messages {
     public static final Component COMMAND_VERIFY_SUCCESS =
             PREFIX.toBuilder().append(translatable("command.verify.success", GREEN)).build();
 
+    public static final Component COMMAND_RELOAD =
+            PREFIX.toBuilder().append(translatable("command.reload", GREEN)).build();
+
     private Messages() {
         throw new UnsupportedOperationException();
     }

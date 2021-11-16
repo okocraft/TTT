@@ -31,6 +31,7 @@ public class ReloadCommand extends AbstractCommand {
         }
 
         plugin.reload();
+        sender.sendMessage(Messages.COMMAND_RELOAD);
     }
 
     @Override
