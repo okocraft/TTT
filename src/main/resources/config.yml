@@ -126,7 +126,7 @@ world-setting:
     # Punishment specified will be executed.
     anti-clickbot:
       # Distance threshold to increment player kill count.
-      distance-threshold: 3
+      distance-threshold: 5
       # Kill count threshold. When player killed mob this kill count times, players needs to be verified.
       # To verify, players should type command /ttt verify <random-string>
       kill-count-threshold: 150
