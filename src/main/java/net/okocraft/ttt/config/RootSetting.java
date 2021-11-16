@@ -54,11 +54,16 @@ public class RootSetting {
     }
 
     private @NotNull WorldSetting readWorldSetting(@NotNull World world) {
-        if (configWorldSettings == null) {
-            return WorldSetting.DEFAULT_SETTING;
+        Configuration section = null;
+        if (world == null) {
+            section = configWorldSettings.getSection("default");
         }
-
-        var section = configWorldSettings.getSection(world.getName());
+        if (section == null) {
+            section = configWorldSettings.getSection(world.getName());
+            if (section == null) {
+                section = configWorldSettings.getSection("default");
+            }
+        }
 
         if (section != null) {
             return WorldSetting.DESERIALIZER.deserializeConfiguration(section);

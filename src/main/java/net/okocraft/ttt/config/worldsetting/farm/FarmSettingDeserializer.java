@@ -50,7 +50,7 @@ public class FarmSettingDeserializer implements ConfigurationSerializer<FarmSett
         boolean preventCrammingDeathDrop = config.getBoolean("prevent-cramming-death-drop");
 
         int killingChumberRange = config.getInteger("finder.killing-chumber-range");
-        int killedMobsToBeKillingChumber = config.getInteger("killed-mobs-to-be-killing-chumber");
+        int killedMobsToBeKillingChumber = config.getInteger("finder.killed-mobs-to-be-killing-chumber");
 
         var farmActions = readFarmActions(config.getSection("finder.farm-actions"));
 

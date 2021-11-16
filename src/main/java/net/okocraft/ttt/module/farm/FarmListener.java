@@ -56,11 +56,13 @@ public class FarmListener implements Listener {
         if (spawnReason == null) {
             return;
         }
+        TTT.debug(spawnReason.toString());
 
         Location spawnLocation = entity.getOrigin();
         if (spawnLocation == null) {
             return;
         }
+        TTT.debug(spawnLocation.toString());
         Location deathLocation = entity.getLocation();
         LogEntity log = new LogEntity(
                 System.currentTimeMillis(),
@@ -91,7 +93,9 @@ public class FarmListener implements Listener {
         List<LogEntity> searchResults = dataTable.search(condition);
         
         if (searchResults.size() >= finderSetting.killedMobsToBeKillingChumber()) {
+            TTT.debug("action.");
             for (FarmAction action : farmActions) {
+                TTT.debug("action: " + action.name());
                 if (action == FarmAction.CLEAR_DROP) {
                     event.getDrops().clear();
                 }
@@ -99,22 +103,23 @@ public class FarmListener implements Listener {
                     event.setDroppedExp(0);
                 }
                 if (action == FarmAction.NOTIFY) {
+                    Component farmIsDetectedMessage = Messages.FARM_IS_DETECTED.apply(log);
+                    plugin.getDiscord().send(
+                            PlainTextComponentSerializer.plainText().serialize(
+                                    GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
+                            )
+                    );
                     WrappedLocation deathLoc = WrappedLocation.of(log.getDeathLocation());
                     Bukkit.getOnlinePlayers().forEach(player -> {                        
                         if (player.hasPermission("ttt.notification.farmfound") && !farmLocationsDetected.containsKey(player.getUniqueId())) {
                             farmLocationsDetected.put(player.getUniqueId(), deathLoc);
-                            Component farmIsDetectedMessage = Messages.FARM_IS_DETECTED.apply(log);
                             player.sendMessage(farmIsDetectedMessage);
-                            plugin.getDiscord().send(
-                                    PlainTextComponentSerializer.plainText().serialize(
-                                            GlobalTranslator.render(farmIsDetectedMessage, Locale.getDefault())
-                                    )
-                            );
                         }
                     });
                 }
             }
         } else {
+            TTT.debug("inserted.");
             new BukkitRunnable(){
                 public void run() { dataTable.insert(log); }
             }.runTaskAsynchronously(plugin);
