@@ -25,7 +25,7 @@ public class VerifyCommand extends AbstractCommand {
             sender.sendMessage(Messages.COMMAND_NO_PERMISSION);
             return;
         }
-        if (args.length == 2) {
+        if (args.length < 2) {
             sender.sendMessage(Messages.COMMAND_NOT_ENOUGH_ARGUMENTS);
             return;
         }
