@@ -51,6 +51,10 @@ public class AntiClickBotListener implements Listener {
                 uid -> new KillLog(1, player.getLocation(), System.currentTimeMillis())
         );
 
+        if (!log.location().getWorld().equals(player.getLocation().getWorld())) {
+            return;
+        }
+
         int distanceThreshold = setting.distanceThreshold();
         if (log.location().distanceSquared(player.getLocation()) > distanceThreshold * distanceThreshold) {
             log.killCount(0);
