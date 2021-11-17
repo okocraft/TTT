@@ -15,7 +15,7 @@ public class ReloadCommand extends AbstractCommand {
     private final TTT plugin;
 
     public ReloadCommand(TTT plugin) {
-        super("reload", "ttt.command.spawner.reload", Set.of("r"));
+        super("reload", "ttt.command.reload", Set.of("r"));
         this.plugin = plugin;
     }
 

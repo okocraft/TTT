@@ -16,7 +16,7 @@ import net.okocraft.ttt.module.anticlickbot.AntiClickBotListener;
 public class VerifyCommand extends AbstractCommand {
 
     public VerifyCommand(TTT plugin) {
-        super("verify", "ttt.command.spawner.verify", Set.of("v"));
+        super("verify", "ttt.command.verify", Set.of("v"));
     }
 
     @Override

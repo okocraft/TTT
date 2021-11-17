@@ -58,6 +58,9 @@ permissions:
   ttt.command.verify:
     description: Permission for `/ttt verify <string>` command.
     default: true
+  ttt.command.reload:
+    description: Permission for `/ttt reload` command.
+    default: op
 
   ttt.notification.farmfound:
     description: Permission to receive find-farm message.
