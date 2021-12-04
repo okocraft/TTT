@@ -70,7 +70,7 @@ public class FarmListener implements Listener {
                             chunks.add(e.getChunk());
                             // そのモブがいたチャンクにいたモブが25匹以上ならモブを全部消す。
                             List<Entity> entities = new ArrayList<>(Arrays.asList(e.getChunk().getEntities()));
-                            entities.removeIf(entity -> entity instanceof Player);
+                            entities.removeIf(entity -> !(e instanceof Monster));
                             for (Entity entitiy : entities) {
                                 if (entities.size() >= 50) {
                                     entitiy.remove();
@@ -80,7 +80,7 @@ public class FarmListener implements Listener {
                     }
                 }
             };
-        // 以上を30秒ごとに実行
+        // 以上を20秒ごとに実行
         }.runTaskTimer(plugin, 1L, 20 * 20L);
     }
 
