@@ -1,7 +1,5 @@
 package net.okocraft.ttt.module.farm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,14 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -56,31 +52,33 @@ public class FarmListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                // 全ワールドにいる
-                for (World world : Bukkit.getWorlds()) {
-                    Set<Chunk> chunks = new HashSet<>();
-                    // 全エンティティについて
-                    for (Entity e : world.getEntities()) {
-                        // 敵対モブ以外は除外し
-                        if (!(e instanceof Monster)) {
-                            continue;
+                try {
+                    for (World world : Bukkit.getWorlds()) {
+                        Map<com.plotsquared.core.plot.Plot, Set<Entity>> plots = new HashMap<>();
+                        for (Entity e : world.getEntities()) {
+                            if (!(e instanceof Monster)) {
+                                continue;
+                            }
+
+                            com.plotsquared.core.plot.Plot plot = com.plotsquared.core.plot.Plot
+                                    .getPlot(com.plotsquared.bukkit.util.BukkitUtil.adapt(e.getLocation()));
+                            if (plot == null) {
+                                continue;
+                            }
+
+                            plots.computeIfAbsent(plot, plot_ -> new HashSet<>()).add(e);
                         }
-                        // そのモブがいたチャンクがすでにチェック済みなら除外し
-                        if (!chunks.contains(e.getChunk())) {
-                            chunks.add(e.getChunk());
-                            // そのモブがいたチャンクにいたモブが25匹以上ならモブを全部消す。
-                            List<Entity> entities = new ArrayList<>(Arrays.asList(e.getChunk().getEntities()));
-                            entities.removeIf(entity -> !(e instanceof Monster));
-                            for (Entity entitiy : entities) {
-                                if (entities.size() >= 50) {
-                                    entitiy.remove();
-                                }
-                            } 
-                        }
+
+                        plots.values().forEach(entitySet -> {
+                            if (entitySet.size() > 100) {
+                                entitySet.forEach(Entity::remove);
+                            }
+                        });
                     }
+                } catch (NoClassDefFoundError ignored) {
                 }
             };
-        // 以上を20秒ごとに実行
+
         }.runTaskTimer(plugin, 1L, 20 * 20L);
     }
 
