@@ -290,14 +290,14 @@ public class SpawnerListener implements Listener {
                                 .worldSetting(event.getWorld())
                                 .spawnerSetting()
                                 .typeMapping()
-                                .column(spawner.getSpawnedType());
+                                .row(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);
                             TTT.debug("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);
                             spawner.setSpawnedType(entityType);
                             spawner.update();
                         } else {
-                            TTT.debug("spawner at " + spawner.getLocation() + " cancelled weightMap enpty.");
+                            TTT.debug("spawner at " + spawner.getLocation() + " cancelled weightMap empty.");
                         }
                     }
                 }
