@@ -161,7 +161,11 @@ public class TTT extends JavaPlugin {
                 messageData = YamlConfiguration.loadFromInputStream(input);
             }
 
-            return ConfigurationLoader.create(locale, messageData);
+            var loader = ConfigurationLoader.create(locale, messageData);
+
+            loader.load();
+
+            return loader;
         } else {
             return null;
         }
