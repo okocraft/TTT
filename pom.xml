@@ -22,10 +22,6 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
-        <repository>
-            <id>libs</id>
-            <url>file://${basedir}/lib</url>
-        </repository>
     </repositories>
     
     <dependencies>
