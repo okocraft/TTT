@@ -22,7 +22,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -246,6 +248,16 @@ public class SpawnerListener implements Listener {
             event.setUseItemInHand(Result.DENY);
             event.getPlayer().sendMessage(Messages.CANNOT_CHANGE_SPAWNER);
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void onBlockExplode(BlockExplodeEvent event) {
+        event.blockList().removeIf(b -> b.getType() == Material.SPAWNER);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    private void onBlockExplode(EntityExplodeEvent event) {
+        event.blockList().removeIf(b -> b.getType() == Material.SPAWNER);
     }
 
     @EventHandler(ignoreCancelled = true)
