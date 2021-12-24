@@ -1,7 +1,10 @@
 package net.okocraft.ttt;
 
+import com.github.siroshun09.configapi.api.Configuration;
 import com.github.siroshun09.configapi.api.util.ResourceUtils;
 import com.github.siroshun09.configapi.yaml.YamlConfiguration;
+import com.github.siroshun09.translationloader.ConfigurationLoader;
+import com.github.siroshun09.translationloader.TranslationLoader;
 import com.github.siroshun09.translationloader.directory.TranslationDirectory;
 import net.kyori.adventure.key.Key;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPI;
@@ -9,22 +12,21 @@ import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIImpl;
 import net.okocraft.ttt.bridge.worldguard.WorldGuardAPIVoid;
 import net.okocraft.ttt.command.TTTCommand;
 import net.okocraft.ttt.config.RootSetting;
+import net.okocraft.ttt.database.Database;
 import net.okocraft.ttt.module.anticlickbot.AntiClickBotListener;
 import net.okocraft.ttt.module.farm.FarmListener;
 import net.okocraft.ttt.module.spawner.Spawner;
 import net.okocraft.ttt.module.spawner.SpawnerListener;
-import net.okocraft.ttt.database.Database;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.logging.Level;
 
 /**
@@ -33,7 +35,7 @@ import java.util.logging.Level;
  * * クリックボットの禁止（interacteventでやると長押しも判定されるのでダメ）
  * * mobstackerの機能
  * * スポナー使用権機能(使用権のあるプレイヤーのみ攻撃でき、ドロップアイテムを拾える)
- * 
+ * <p>
  * 追加済み
  * * 自然に出現するスポナーのモブタイプの種類を増やす機能
  * * 自然湧きTT検知機能
@@ -57,7 +59,14 @@ public class TTT extends JavaPlugin {
             YamlConfiguration.create(pluginDirectory.resolve("playerdata.yml"));
 
     private final TranslationDirectory translationDirectory =
-            TranslationDirectory.create(pluginDirectory.resolve("languages"), Key.key("ttt", "languages"));
+            TranslationDirectory.newBuilder()
+                    .setDirectory(pluginDirectory.resolve("languages"))
+                    .setVersion(getDescription().getVersion())
+                    .setKey(Key.key("ttt", "languages"))
+                    .setDefaultLocale(Locale.JAPAN)
+                    .setTranslationLoaderCreator(this::createDefaultLanguageLoader)
+                    .onDirectoryCreated(this::saveDefaultLanguages)
+                    .build();
 
     private RootSetting setting;
 
@@ -144,6 +153,24 @@ public class TTT extends JavaPlugin {
         ResourceUtils.copyFromJar(getFile().toPath(), "languages/" + japanese, directory.resolve(japanese));
     }
 
+    private @Nullable TranslationLoader createDefaultLanguageLoader(@NotNull Locale locale) throws IOException {
+        if (locale.equals(Locale.JAPAN)) {
+            Configuration messageData;
+
+            try (var input = ResourceUtils.getInputStreamFromJar(getFile().toPath(), "languages/" + locale + ".yml")) {
+                messageData = YamlConfiguration.loadFromInputStream(input);
+            }
+
+            var loader = ConfigurationLoader.create(locale, messageData);
+
+            loader.load();
+
+            return loader;
+        } else {
+            return null;
+        }
+    }
+
     public Database getDatabase() {
         return database;
     }
@@ -173,10 +200,7 @@ public class TTT extends JavaPlugin {
             getLogger().log(Level.SEVERE, "Could not load playerdata.yml", e);
         }
 
-        translationDirectory.getRegistry().defaultLocale(Locale.JAPAN);
-
         try {
-            translationDirectory.createDirectoryIfNotExists(this::saveDefaultLanguages);
             translationDirectory.load();
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load language files.", e);
@@ -187,7 +211,7 @@ public class TTT extends JavaPlugin {
 
     /**
      * Prints debug message on console.
-     * 
+     *
      * @param debugMessage debug message
      */
     public static void debug(String debugMessage) {
