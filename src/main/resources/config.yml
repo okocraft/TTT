@@ -9,6 +9,7 @@ world-setting:
       # World is recognized by world uuid. Means if world uuid is changed,
       # max-minable-spawners limit will be reset.
       max-minable-spawners:
+        enabled: true
         DEFAULT: 2 # Entity name or DEFAULT.
         ZOMBIE: 2
       

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Map;
 
 public record SpawnerSetting(
+        boolean minableSpawnerLimitEnabled,
         int defaultMaxMinableSpawners,
         @NotNull Map<EntityType, Integer> maxMinableSpawners,
         int defaultMaxSpawnableMobs,

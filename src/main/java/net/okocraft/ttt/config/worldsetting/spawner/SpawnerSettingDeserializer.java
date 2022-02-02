@@ -46,6 +46,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         );
 
         return new SpawnerSetting(
+                config.getBoolean("max-minable-spawners.enabled", true),
                 config.getInteger("max-minable-spawners.DEFAULT"),
                 readEntityValues(config.getSection("max-minable-spawners")),
                 config.getInteger("max-spawnable-mobs.DEFAULT"),

@@ -21,6 +21,7 @@ public record WorldSetting(@NotNull SpawnerSetting spawnerSetting, @NotNull Farm
 
     public static WorldSetting DEFAULT_SETTING = new WorldSetting(
             new SpawnerSetting(
+                    true,
                     2,
                     Collections.emptyMap(),
                     100000,
