@@ -67,7 +67,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         var map = new HashMap<EntityType, Integer>(keys.size());
 
         for (var key : keys) {
-            if (!key.equalsIgnoreCase("DEFAULT")) {
+            if (!key.equalsIgnoreCase("DEFAULT") && !key.equals("enabled")) {
                 toEntityType(key).ifPresent(type -> map.put(type, section.getInteger(key)));
             }
         }
@@ -83,7 +83,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         ImmutableTable.Builder<EntityType, EntityType, Double> builder = ImmutableTable.builder();
 
         for (var key : section.getKeyList()) {
-            if (key.equalsIgnoreCase("DEFAULT")) {
+            if (key.equalsIgnoreCase("DEFAULT") || key.equals("enabled")) {
                 continue;
             }
 
