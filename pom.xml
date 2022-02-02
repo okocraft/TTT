@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <groupId>net.okocraft.ttt</groupId>
     <artifactId>TTT</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -23,7 +23,7 @@
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
     </repositories>
-    
+
     <dependencies>
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -126,6 +126,26 @@
                         <relocation>
                             <pattern>com.github.siroshun09</pattern>
                             <shadedPattern>${project.groupId}.lib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>club.minnced</pattern>
+                            <shadedPattern>${project.groupId}.lib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.zaxxer</pattern>
+                            <shadedPattern>${project.groupId}.lib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>okio</pattern>
+                            <shadedPattern>${project.groupId}.lib.okio</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>okhttp3</pattern>
+                            <shadedPattern>${project.groupId}.lib.okhttp3</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.json</pattern>
+                            <shadedPattern>${project.groupId}.lib.json</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
