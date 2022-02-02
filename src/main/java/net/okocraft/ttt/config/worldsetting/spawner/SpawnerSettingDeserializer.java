@@ -53,6 +53,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
                 readEntityValues(config.getSection("max-spawnable-mobs")),
                 isolatingSetting,
                 redstoneSwitchesSetting,
+                config.getBoolean("type-mapping.enabled"),
                 readTypeMapping(config.getSection("type-mapping"))
         );
     }

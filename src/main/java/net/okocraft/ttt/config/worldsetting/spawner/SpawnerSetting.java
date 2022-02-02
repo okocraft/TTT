@@ -15,6 +15,7 @@ public record SpawnerSetting(
         @NotNull Map<EntityType, Integer> maxSpawnableMobs,
         @NotNull IsolatingSetting isolatingSetting,
         @NotNull RedstoneSwitchesSetting redstoneSwitchesSetting,
+        boolean typeMappingEnabled,
         /** Row is source type, Column is mapped type and the value is weight. */
         @NotNull @Unmodifiable Table<EntityType, EntityType, Double> typeMapping
 ) {

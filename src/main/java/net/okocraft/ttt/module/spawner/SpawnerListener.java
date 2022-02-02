@@ -295,17 +295,18 @@ public class SpawnerListener implements Listener {
 
     @EventHandler
     private void onChunkPopulate(ChunkPopulateEvent event) {
+        var spawnerSetting = plugin.getSetting().worldSetting(event.getWorld()).spawnerSetting();
+        if (!spawnerSetting.typeMappingEnabled()) {
+            return;
+        }
+
         new BukkitRunnable(){
 
             @Override
             public void run() {
                 for (BlockState tile : event.getChunk().getTileEntities()) {
                     if (tile instanceof CreatureSpawner spawner && !SpawnerState.isValid(spawner)) {
-                        Map<EntityType, Double> weightMap = plugin.getSetting()
-                                .worldSetting(event.getWorld())
-                                .spawnerSetting()
-                                .typeMapping()
-                                .row(spawner.getSpawnedType());
+                        Map<EntityType, Double> weightMap = spawnerSetting.typeMapping().row(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);
                             TTT.debug("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);

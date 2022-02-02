@@ -28,6 +28,7 @@ public record WorldSetting(@NotNull SpawnerSetting spawnerSetting, @NotNull Farm
                     Collections.emptyMap(),
                     new IsolatingSetting(true, 34, 2, 34, 2),
                     new RedstoneSwitchesSetting(false, false),
+                    true,
                     ImmutableTable.of()
             ),
             new FarmSetting(

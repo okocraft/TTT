@@ -44,6 +44,7 @@ world-setting:
       # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
       # An number for each mapped type is weight. Higher number, more likely to be chosen.
       type-mapping:
+        enabled: true
         ZOMBIE:
           ZOMBIE: 3
           DROWNED: 2
