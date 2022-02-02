@@ -33,6 +33,6 @@ public record WorldSetting(@NotNull SpawnerSetting spawnerSetting, @NotNull Farm
             new FarmSetting(
                     true, new FinderSetting(2, 30, ImmutableMultimap.of())
             ),
-            new AntiClickBotSetting(3, 150, 30, Punishment.SUMMON_ENEMY)
+            new AntiClickBotSetting(true, 3, 150, 30, Punishment.SUMMON_ENEMY)
     );
 }

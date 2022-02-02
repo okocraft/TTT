@@ -39,6 +39,11 @@ public class AntiClickBotListener implements Listener {
             return;
         }
         AntiClickBotSetting setting = plugin.getSetting().worldSetting(player.getWorld()).antiClickBotSetting();
+
+        if (!setting.enabled()) {
+            return;
+        }
+
         String randomString = getVerificationString(player.getUniqueId());
         if (!randomString.isEmpty()) {
             player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, setting.verificationTimeout()));
