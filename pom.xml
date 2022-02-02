@@ -50,8 +50,14 @@
         <dependency>
             <groupId>com.plotsquared</groupId>
             <artifactId>PlotSquared-Bukkit</artifactId>
-            <version>6.2.1</version>
+            <version>6.4.0</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.EngineHub</groupId>
+                    <artifactId>SquirrelID</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.siroshun09.configapi</groupId>
