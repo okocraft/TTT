@@ -9,6 +9,7 @@ world-setting:
       # World is recognized by world uuid. Means if world uuid is changed,
       # max-minable-spawners limit will be reset.
       max-minable-spawners:
+        enabled: true
         DEFAULT: 2 # Entity name or DEFAULT.
         ZOMBIE: 2
       
@@ -43,6 +44,7 @@ world-setting:
       # With this default setting, for example, zombie spawner can be zombie, drowned, husk, ... creeper.
       # An number for each mapped type is weight. Higher number, more likely to be chosen.
       type-mapping:
+        enabled: true
         ZOMBIE:
           ZOMBIE: 3
           DROWNED: 2
@@ -125,6 +127,7 @@ world-setting:
     # by typing command /ttt verify <random-string> in specified time limit.
     # Punishment specified will be executed.
     anti-clickbot:
+      enabled: true
       # Distance threshold to increment player kill count.
       distance-threshold: 5
       # Kill count threshold. When player killed mob this kill count times, players needs to be verified.

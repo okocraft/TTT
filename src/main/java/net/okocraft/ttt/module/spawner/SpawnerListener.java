@@ -70,17 +70,19 @@ public class SpawnerListener implements Listener {
                     container.remove(key);
                 }
             }
-            
+
+            var spawnerSetting = plugin.getSetting().worldSetting(block.getWorld()).spawnerSetting();
+            boolean minableSpawnerLimitEnabled = spawnerSetting.minableSpawnerLimitEnabled();
             // mined spawner amount limit
             int minedSpawners = 0;
-            if (!player.hasPermission("ttt.bypass.spawner.minelimit")) {
+            if (minableSpawnerLimitEnabled && !player.hasPermission("ttt.bypass.spawner.minelimit")) {
                 Configuration playerData = plugin.getPlayerData()
                         .getSection(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID());
                 if (playerData != null) {
                     minedSpawners = playerData.getInteger(state.getSpawnedType().name());
 
-                    int limit = plugin.getSetting().worldSetting(block.getWorld()).spawnerSetting()
-                            .maxMinableSpawners(state.getSpawnedType());
+                    int limit = spawnerSetting.maxMinableSpawners(state.getSpawnedType());
+
                     if (minedSpawners >= limit) {
                         TTT.debug("break cancelled due to mine limit");
                         event.setCancelled(true);
@@ -100,16 +102,17 @@ public class SpawnerListener implements Listener {
                 block.getWorld().dropItemNaturally(block.getLocation(),
                         SpawnerItem.from(state).getWithLocale(event.getPlayer().locale()));
 
-                minedSpawners++;
-                plugin.getPlayerData().set(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID() + "."
-                        + state.getSpawnedType().name(), minedSpawners);
-                try {
-                    plugin.getPlayerData().save();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (minableSpawnerLimitEnabled) {
+                    minedSpawners++;
+                    plugin.getPlayerData().set(player.getUniqueId() + ".mined-spawners." + block.getWorld().getUID() + "."
+                            + state.getSpawnedType().name(), minedSpawners);
+                    try {
+                        plugin.getPlayerData().save();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            
         } else {
             if (!player.hasPermission("ttt.spawner.drop.*") && !player.hasPermission("ttt.spawner.drop." + state.getSpawnedType().getKey().getKey())) {
                 return;
@@ -154,7 +157,7 @@ public class SpawnerListener implements Listener {
         }
 
         SpawnerState.from(spawner).copyFrom(spawnerItem);
-        spawner.update();     
+        spawner.update();
     }
 
     private void cancelEventIfNotIsolated(CreatureSpawner placed, BlockPlaceEvent event) {
@@ -165,7 +168,7 @@ public class SpawnerListener implements Listener {
 
         // PlotSquared
         try {
-            com.plotsquared.core.plot.Plot plot = 
+            com.plotsquared.core.plot.Plot plot =
                     com.plotsquared.core.plot.Plot.getPlot(com.plotsquared.bukkit.util.BukkitUtil.adapt(placed.getLocation()));
             if (plot != null) {
                 Set<CreatureSpawner> spawners = new HashSet<>();
@@ -272,7 +275,7 @@ public class SpawnerListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        
+
         if (spawner.getSpawnableMobs() <= 0) {
             event.setCancelled(true);
         } else {
@@ -292,17 +295,18 @@ public class SpawnerListener implements Listener {
 
     @EventHandler
     private void onChunkPopulate(ChunkPopulateEvent event) {
+        var spawnerSetting = plugin.getSetting().worldSetting(event.getWorld()).spawnerSetting();
+        if (!spawnerSetting.typeMappingEnabled()) {
+            return;
+        }
+
         new BukkitRunnable(){
 
             @Override
             public void run() {
                 for (BlockState tile : event.getChunk().getTileEntities()) {
                     if (tile instanceof CreatureSpawner spawner && !SpawnerState.isValid(spawner)) {
-                        Map<EntityType, Double> weightMap = plugin.getSetting()
-                                .worldSetting(event.getWorld())
-                                .spawnerSetting()
-                                .typeMapping()
-                                .row(spawner.getSpawnedType());
+                        Map<EntityType, Double> weightMap = spawnerSetting.typeMapping().row(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);
                             TTT.debug("spawner at " + spawner.getLocation() + " has been changed from " + spawner.getSpawnedType() + " to " + entityType);

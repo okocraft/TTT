@@ -8,12 +8,14 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Map;
 
 public record SpawnerSetting(
+        boolean minableSpawnerLimitEnabled,
         int defaultMaxMinableSpawners,
         @NotNull Map<EntityType, Integer> maxMinableSpawners,
         int defaultMaxSpawnableMobs,
         @NotNull Map<EntityType, Integer> maxSpawnableMobs,
         @NotNull IsolatingSetting isolatingSetting,
         @NotNull RedstoneSwitchesSetting redstoneSwitchesSetting,
+        boolean typeMappingEnabled,
         /** Row is source type, Column is mapped type and the value is weight. */
         @NotNull @Unmodifiable Table<EntityType, EntityType, Double> typeMapping
 ) {

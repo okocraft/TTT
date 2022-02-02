@@ -46,12 +46,14 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         );
 
         return new SpawnerSetting(
+                config.getBoolean("max-minable-spawners.enabled", true),
                 config.getInteger("max-minable-spawners.DEFAULT"),
                 readEntityValues(config.getSection("max-minable-spawners")),
                 config.getInteger("max-spawnable-mobs.DEFAULT"),
                 readEntityValues(config.getSection("max-spawnable-mobs")),
                 isolatingSetting,
                 redstoneSwitchesSetting,
+                config.getBoolean("type-mapping.enabled"),
                 readTypeMapping(config.getSection("type-mapping"))
         );
     }
@@ -65,7 +67,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         var map = new HashMap<EntityType, Integer>(keys.size());
 
         for (var key : keys) {
-            if (!key.equalsIgnoreCase("DEFAULT")) {
+            if (!key.equalsIgnoreCase("DEFAULT") && !key.equals("enabled")) {
                 toEntityType(key).ifPresent(type -> map.put(type, section.getInteger(key)));
             }
         }
@@ -81,7 +83,7 @@ public class SpawnerSettingDeserializer implements ConfigurationSerializer<Spawn
         ImmutableTable.Builder<EntityType, EntityType, Double> builder = ImmutableTable.builder();
 
         for (var key : section.getKeyList()) {
-            if (key.equalsIgnoreCase("DEFAULT")) {
+            if (key.equalsIgnoreCase("DEFAULT") || key.equals("enabled")) {
                 continue;
             }
 

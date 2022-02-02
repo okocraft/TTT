@@ -17,6 +17,7 @@ public class AntiClickBotSettingDeserializer implements ConfigurationSerializer<
 
     @Override
     public @NotNull AntiClickBotSetting deserializeConfiguration(@NotNull Configuration config) {
+        boolean enabled = config.getBoolean("enabled", true);
         int distanceThreshold = config.getInteger("distance-threshold");
         int killCountThreshold = config.getInteger("kill-count-threshold");
         int verificationTimeout = config.getInteger("verification-timeout");
@@ -27,7 +28,7 @@ public class AntiClickBotSettingDeserializer implements ConfigurationSerializer<
             punishment = Punishment.SUMMON_ENEMY;
         }
 
-        return new AntiClickBotSetting(distanceThreshold, killCountThreshold, verificationTimeout, punishment);
+        return new AntiClickBotSetting(enabled, distanceThreshold, killCountThreshold, verificationTimeout, punishment);
     }
 
 }

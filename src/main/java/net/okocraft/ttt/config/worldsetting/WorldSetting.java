@@ -21,17 +21,19 @@ public record WorldSetting(@NotNull SpawnerSetting spawnerSetting, @NotNull Farm
 
     public static WorldSetting DEFAULT_SETTING = new WorldSetting(
             new SpawnerSetting(
+                    true,
                     2,
                     Collections.emptyMap(),
                     100000,
                     Collections.emptyMap(),
                     new IsolatingSetting(true, 34, 2, 34, 2),
                     new RedstoneSwitchesSetting(false, false),
+                    true,
                     ImmutableTable.of()
             ),
             new FarmSetting(
                     true, new FinderSetting(2, 30, ImmutableMultimap.of())
             ),
-            new AntiClickBotSetting(3, 150, 30, Punishment.SUMMON_ENEMY)
+            new AntiClickBotSetting(true, 3, 150, 30, Punishment.SUMMON_ENEMY)
     );
 }
