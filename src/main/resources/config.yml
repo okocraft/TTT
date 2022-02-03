@@ -88,6 +88,8 @@ world-setting:
       disable-spawner: false
       # okocraft ancient - add setting to disable natural spawning
       disable-natural-spawning: false
+      # okocraft ancient - add setting to disable collision for mobs spawned from spawners
+      disable-collision: false
 
     farm:
       # If true, stops entity death drop when the entity's death reason is cramming.

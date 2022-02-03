@@ -468,4 +468,23 @@ public class SpawnerListener implements Listener {
             return config.getBoolean("world-setting.default.spawner.disable-natural-spawning");
         }
     }
+
+    // okocraft ancient - add setting to disable collision for mobs spawned from spawners
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onMobSpawnFromSpawnerMonitor(SpawnerSpawnEvent event) {
+        if (collisionDisabled(event.getSpawner().getWorld()) && event.getEntity() instanceof org.bukkit.entity.Mob mob) {
+            mob.setCollidable(false);
+        }
+    }
+
+    private boolean collisionDisabled(org.bukkit.World world) {
+        var worldName = world.getName();
+        var config = plugin.getConfiguration();
+
+        if (config.get("world-setting." + worldName + ".spawner.disable-collision") instanceof Boolean bool) {
+            return bool;
+        } else {
+            return config.getBoolean("world-setting.default.spawner.disable-collision");
+        }
+    }
 }
