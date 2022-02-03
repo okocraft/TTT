@@ -88,9 +88,9 @@ public final class Messages {
                                     .key("shown-spawner-status")
                                     .args(
                                             text(spawner.isRunning(), AQUA),
-                                            translatable(spawner.getSpawnedType(), AQUA),
+                                            translatable(spawner.getSpawnedType(), AQUA)/*, okocraft ancient - disable max-spawnable-mobs-limit
                                             text(spawner.getSpawnableMobs(), AQUA),
-                                            text(spawner.getMaxSpawnableMobs(), AQUA))
+                                            text(spawner.getMaxSpawnableMobs(), AQUA)*/)
                                     .color(GRAY)
                                     .build()
                     )

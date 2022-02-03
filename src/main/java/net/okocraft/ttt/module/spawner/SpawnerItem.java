@@ -37,12 +37,14 @@ public class SpawnerItem extends Spawner<ItemStack> {
         if (!dataContainer.has(entityKey, PersistentDataType.STRING)) {
             return false;
         }
+        /* okocraft ancient - disable max-spawnable-mobs-limit
         if (!dataContainer.has(maxSpawnableMobsKey, PersistentDataType.INTEGER)) {
             return false;
         }
         if (!dataContainer.has(spawnableMobsKey, PersistentDataType.INTEGER)) {
             return false;
         }
+        */
 
         return true;
     }
@@ -73,11 +75,12 @@ public class SpawnerItem extends Spawner<ItemStack> {
                 type = EntityType.PIG;
             }
             dataContainer.set(entityKey, PersistentDataType.STRING, type.name());
-            
+            /* okocraft ancient - disable max-spawnable-mobs-limit
             int max = TTT.getPlugin(TTT.class).getConfiguration()
                     .getInteger("world-setting.default.spawner.max-spawnable-mobs.DEFAULT", 100000);
             dataContainer.set(maxSpawnableMobsKey, PersistentDataType.INTEGER, max);
             dataContainer.set(spawnableMobsKey, PersistentDataType.INTEGER, max);
+            */
             spawner.setItemMeta(meta);
         }
     }
@@ -89,12 +92,14 @@ public class SpawnerItem extends Spawner<ItemStack> {
         SpawnerItem spawner = new SpawnerItem(item);
         if (!isValid(item)) {
             spawner.setSpawnedType(spawner.getSpawnedType());
+            /* okocraft ancient - disable max-spawnable-mobs-limit
             Configuration config = TTT.getPlugin(TTT.class).getConfiguration();
             int maxSpawnableMobs = config
                     .getInteger("world-setting.default.spawner.max-spawnable-mobs." + spawner.getSpawnedType().name(), 
                             config.getInteger("world-setting.default.spawner.max-spawnable-mobs.DEFAULT", 100000));
             spawner.setMaxSpawnableMobs(maxSpawnableMobs);
             spawner.setSpawnableMobs(spawner.getSpawnableMobs());
+            */
         }
         return spawner;
     }
@@ -110,11 +115,13 @@ public class SpawnerItem extends Spawner<ItemStack> {
     public static SpawnerItem create(EntityType spawnedType, int maxSpawnableMobs, int spawnableMobs) {
         SpawnerItem spawner = new SpawnerItem(new ItemStack(Material.SPAWNER));
         spawner.setSpawnedType(spawnedType);
+        /* okocraft ancient - disable max-spawnable-mobs-limit
         spawner.setMaxSpawnableMobs(maxSpawnableMobs);
         spawner.setSpawnableMobs(spawnableMobs);
+         */
         return spawner;
     }
-    
+
     public ItemStack getWithLocale(Locale locale) {
         changeLocale(locale);
         return spawner;
@@ -124,7 +131,8 @@ public class SpawnerItem extends Spawner<ItemStack> {
         ItemMeta meta = spawner.getItemMeta();
         EntityType type = getSpawnedType();
         meta.displayName(GlobalTranslator.render(Messages.SPAWNER_DISPLAY_NAME.apply(type), locale));
-        meta.lore(List.of(GlobalTranslator.render(Messages.SPAWNER_LORE.apply(this), locale)));
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        //meta.lore(List.of(GlobalTranslator.render(Messages.SPAWNER_LORE.apply(this), locale)));
         
         spawner.setItemMeta(meta);
     }
@@ -153,11 +161,15 @@ public class SpawnerItem extends Spawner<ItemStack> {
 
     @Override
     public int getMaxSpawnableMobs() {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return Integer.MAX_VALUE;
         return spawner.getItemMeta().getPersistentDataContainer().getOrDefault(maxSpawnableMobsKey, PersistentDataType.INTEGER, 100000);
     }
     
     @Override
     public void setMaxSpawnableMobs(int maxSpawnableMobs) {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return;
         ItemMeta meta = spawner.getItemMeta();
         meta.getPersistentDataContainer().set(maxSpawnableMobsKey, PersistentDataType.INTEGER, maxSpawnableMobs);
         spawner.setItemMeta(meta);
@@ -169,11 +181,15 @@ public class SpawnerItem extends Spawner<ItemStack> {
 
     @Override
     public int getSpawnableMobs() {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return Integer.MAX_VALUE;
         return spawner.getItemMeta().getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, getMaxSpawnableMobs());
     }
 
     @Override
     public void setSpawnableMobs(int spawnableMobs) {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return;
         int maxSpawnableMobs = getMaxSpawnableMobs();
         if (spawnableMobs > maxSpawnableMobs) {
             spawnableMobs = maxSpawnableMobs;

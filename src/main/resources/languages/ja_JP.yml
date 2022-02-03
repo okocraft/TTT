@@ -3,7 +3,7 @@ spawner-item:
   display-name: "{0}のスポナー"
   lore: "スポーン可能モブ数: {0}/{1}"
 
-shown-spawner-status: "\n-------------------\n起動状態: {0}\nスポーンされるモブ: {1}\nスポーン可能モブ数: {2}/{3}\n-------------------"
+shown-spawner-status: "\n-------------------\n起動状態: {0}\nスポーンされるモブ: {1}\n-------------------" # okocraft ancient - disable max-spawnable-mobs-limit
 spawner-stop-tip: "スポナーにレッドストーン動力を与えるとスポナーを停止できます。"
 spawner-start-tip: "スポナーにレッドストーン動力を与えるとスポナーを起動できます。"
 cannot-change-spawner: "スポナーの中のモブを変更することはできません。"

@@ -276,6 +276,7 @@ public class SpawnerListener implements Listener {
             return;
         }
 
+        /* okocraft ancient - disable max-spawnable-mobs-limit
         if (spawner.getSpawnableMobs() <= 0) {
             event.setCancelled(true);
         } else {
@@ -283,6 +284,7 @@ public class SpawnerListener implements Listener {
         }
 
         creatureSpawner.update();
+        */
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -305,7 +307,7 @@ public class SpawnerListener implements Listener {
             @Override
             public void run() {
                 for (BlockState tile : event.getChunk().getTileEntities()) {
-                    if (tile instanceof CreatureSpawner spawner && !SpawnerState.isValid(spawner)) {
+                    if (tile instanceof CreatureSpawner spawner) { // okocraft - remove spawner checking due to disable max-spawnable-mobs-limit
                         Map<EntityType, Double> weightMap = spawnerSetting.typeMapping().row(spawner.getSpawnedType());
                         if (!weightMap.isEmpty()) {
                             EntityType entityType = chooseOnWeight(weightMap);

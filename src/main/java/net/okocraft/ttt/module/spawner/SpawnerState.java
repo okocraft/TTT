@@ -28,6 +28,7 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
             return false;
         }
 
+        /* okocraft ancient - disable max-spawnable-mobs-limit
         PersistentDataContainer dataContainer = spawner.getPersistentDataContainer();
         if (!dataContainer.has(maxSpawnableMobsKey, PersistentDataType.INTEGER)) {
             return false;
@@ -35,6 +36,7 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
         if (!dataContainer.has(spawnableMobsKey, PersistentDataType.INTEGER)) {
             return false;
         }
+        */
         return true;
     }
 
@@ -51,8 +53,10 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
     }
 
     public void copyFrom(SpawnerItem spawnerItem) {
+        /* okocraft ancient - disable max-spawnable-mobs-limit
         setMaxSpawnableMobs(spawnerItem.getMaxSpawnableMobs());
         setSpawnableMobs(spawnerItem.getSpawnableMobs());
+        */
         setSpawnedType(spawnerItem.getSpawnedType());
     }
 
@@ -68,11 +72,15 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
 
     @Override
     public int getMaxSpawnableMobs() {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return Integer.MAX_VALUE;
         return spawner.getPersistentDataContainer().getOrDefault(maxSpawnableMobsKey, PersistentDataType.INTEGER, 100000);
     }
     
     @Override
     public void setMaxSpawnableMobs(int maxSpawnableMobs) {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return;
         spawner.getPersistentDataContainer().set(maxSpawnableMobsKey, PersistentDataType.INTEGER, maxSpawnableMobs);
 
         if (getSpawnableMobs() > maxSpawnableMobs) {
@@ -82,11 +90,15 @@ public class SpawnerState extends Spawner<CreatureSpawner> {
 
     @Override
     public int getSpawnableMobs() {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return Integer.MAX_VALUE;
         return spawner.getPersistentDataContainer().getOrDefault(spawnableMobsKey, PersistentDataType.INTEGER, getMaxSpawnableMobs());
     }
 
     @Override
     public void setSpawnableMobs(int spawnableMobs) {
+        // okocraft ancient - disable max-spawnable-mobs-limit
+        if (true) return;
         int maxSpawnableMobs = getMaxSpawnableMobs();
         if (spawnableMobs > maxSpawnableMobs) {
             spawnableMobs = maxSpawnableMobs;
