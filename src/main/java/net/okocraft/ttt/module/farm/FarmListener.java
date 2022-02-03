@@ -79,7 +79,7 @@ public class FarmListener implements Listener {
                 }
             };
 
-        }.runTaskTimer(plugin, 1L, 20 * 20L);
+        }/*.runTaskTimer(plugin, 1L, 20 * 20L)*/; // okocraft ancient - disable mob remover
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
