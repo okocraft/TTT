@@ -86,6 +86,8 @@ world-setting:
         max-mobs: 100
       # okocraft ancient - add setting to disable spawner
       disable-spawner: false
+      # okocraft ancient - add setting to disable natural spawning
+      disable-natural-spawning: false
 
     farm:
       # If true, stops entity death drop when the entity's death reason is cramming.

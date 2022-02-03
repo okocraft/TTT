@@ -448,4 +448,24 @@ public class SpawnerListener implements Listener {
             return config.getBoolean("world-setting.default.spawner.mob-limit.enabled");
         }
     }
+    // okocraft ancient - add setting to disable natural spawning
+    @EventHandler(ignoreCancelled = true)
+    public void onNaturalSpawn(org.bukkit.event.entity.CreatureSpawnEvent e) {
+        if (naturalSpawningDisabled(e.getEntity().getWorld()) &&
+                e.getSpawnReason() == org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL &&
+                e.getEntity() instanceof org.bukkit.entity.Mob) {
+            e.setCancelled(true);
+        }
+    }
+
+    private boolean naturalSpawningDisabled(org.bukkit.World world) {
+        var worldName = world.getName();
+        var config = plugin.getConfiguration();
+
+        if (config.get("world-setting." + worldName + ".spawner.disable-natural-spawning") instanceof Boolean bool) {
+            return bool;
+        } else {
+            return config.getBoolean("world-setting.default.spawner.disable-natural-spawning");
+        }
+    }
 }
