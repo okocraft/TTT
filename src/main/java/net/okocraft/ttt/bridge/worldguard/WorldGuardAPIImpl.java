@@ -48,4 +48,33 @@ public class WorldGuardAPIImpl implements WorldGuardAPI {
             Flags.PVP
         ) != State.DENY;
     }
+    // okocraft ancient - add spawner mob limiter
+    @Override
+    public @org.jetbrains.annotations.Nullable org.bukkit.util.BoundingBox getRegion(@org.jetbrains.annotations.NotNull org.bukkit.Location location) {
+        var world = location.getWorld();
+
+        if (world == null) {
+            return null;
+        }
+
+        var regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
+
+        if (regionManager == null) {
+            return null;
+        }
+
+        var region =
+                regionManager.getApplicableRegions(BukkitAdapter.asBlockVector(location)).getRegions()
+                .stream()
+                .max(java.util.Comparator.comparing(com.sk89q.worldguard.protection.regions.ProtectedRegion::getPriority))
+                .orElse(null);
+
+        if (region == null || region.getType() == com.sk89q.worldguard.protection.regions.RegionType.GLOBAL) {
+            return null;
+        }
+
+        var minPoint = BukkitAdapter.adapt(world, region.getMinimumPoint());
+        var maxPoint = BukkitAdapter.adapt(world, region.getMaximumPoint());
+        return org.bukkit.util.BoundingBox.of(minPoint, maxPoint);
+    }
 }

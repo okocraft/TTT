@@ -341,4 +341,111 @@ public class SpawnerListener implements Listener {
         }
         throw new RuntimeException("Should never be shown.");
     }
+
+    // okocraft ancient - add spawner mob limiter & add setting to disable spawner
+    private final Map<org.bukkit.World, Set<org.bukkit.util.BoundingBox>> spawnedRegions = new java.util.HashMap<>();
+    private boolean taskStarted = false;
+
+    @EventHandler
+    public void onMobSpawn(SpawnerSpawnEvent event) {
+        if (spawnerDisabled(event.getSpawner().getWorld())) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (!mobLimiterEnabled(event.getEntity().getWorld())) {
+            return;
+        }
+
+        var region =  plugin.getWorldGuardAPI().getRegion(event.getLocation());
+        if (region != null) {
+            spawnedRegions.computeIfAbsent(event.getSpawner().getWorld(), k -> new HashSet<>()).add(region);
+        }
+        if (!taskStarted) {
+            taskStarted = true;
+            checkMobTask().runTaskTimer(plugin, 1L, 20 * 20);
+        }
+    }
+
+    private org.bukkit.scheduler.BukkitRunnable checkMobTask() {
+        return new org.bukkit.scheduler.BukkitRunnable() {
+            @Override
+            public void run() {
+                plugin.getServer().getWorlds()
+                        .stream()
+                        .filter(world -> mobLimiterEnabled(world))
+                        .forEach(this::checkMobs);
+            }
+
+            private void checkMobs(org.bukkit.World world) {
+                var regions = spawnedRegions.get(world);
+
+                if (regions == null) {
+                    return;
+                }
+
+                var mobMap = new java.util.HashMap<org.bukkit.util.BoundingBox, java.util.List<org.bukkit.entity.LivingEntity>>();
+
+                for (var entity : world.getLivingEntities()) {
+                    if (!(entity instanceof org.bukkit.entity.Mob)) {
+                        continue;
+                    }
+
+                    double x = entity.getLocation().getX();
+                    double y = entity.getLocation().getY();
+                    double z = entity.getLocation().getZ();
+
+                    for (var region : regions) {
+                        if (region.contains(x, y, z)) {
+                            mobMap.computeIfAbsent(region, k -> new java.util.ArrayList<>()).add(entity);
+                            break;
+                        }
+                    }
+                }
+
+                int maxMobs = maxMobs(world);
+
+                for (var mobs : mobMap.values()) {
+                    if (maxMobs <= mobs.size()) {
+                        for (var mob : mobs) {
+                            mob.remove();
+                        }
+                    }
+                }
+            }
+
+            private int maxMobs(org.bukkit.World world) {
+                var worldName = world.getName();
+                var config = plugin.getConfiguration();
+
+                if (config.get("world-setting." + worldName + ".spawner.mob-limit.max-mobs") instanceof Integer amount) {
+                    return amount;
+                } else {
+                    return config.getInteger("world-setting.default.spawner.mob-limit.max-mobs", 100);
+                }
+            }
+        };
+    }
+
+    private boolean spawnerDisabled(org.bukkit.World world) {
+        var worldName = world.getName();
+        var config = plugin.getConfiguration();
+
+        if (config.get("world-setting." + worldName + ".spawner.disable-spawner") instanceof Boolean bool) {
+            return bool;
+        } else {
+            return config.getBoolean("world-setting.default.spawner.disable-spawner");
+        }
+    }
+
+    private boolean mobLimiterEnabled(org.bukkit.World world) {
+        var worldName = world.getName();
+        var config = plugin.getConfiguration();
+
+        if (config.get("world-setting." + worldName + ".spawner.mob-limit.enabled") instanceof Boolean bool) {
+            return bool;
+        } else {
+            return config.getBoolean("world-setting.default.spawner.mob-limit.enabled");
+        }
+    }
 }

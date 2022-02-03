@@ -79,7 +79,14 @@ world-setting:
         MAGMA_CUBE:
           MAGMA_CUBE: 2
           SLIME: 1
-    
+      # okocraft ancient - add spawner mob limiter
+      # Set the number of mobs that can exist in WorldGuard protection.
+      mob-limit:
+        enabled: false
+        max-mobs: 100
+      # okocraft ancient - add setting to disable spawner
+      disable-spawner: false
+
     farm:
       # If true, stops entity death drop when the entity's death reason is cramming.
       prevent-cramming-death-drop: true
