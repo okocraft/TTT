@@ -25,7 +25,7 @@ public class AntiClickBotListener implements Listener {
 
     private static final Map<UUID, String> WAITING_VERIFICATION = new HashMap<>();
     private static final Map<UUID, KillLog> KILL_LOGS = new HashMap<>();
-    
+    private final Map<UUID, Long> lastMessageTimeMap = new HashMap<>(); // okocraft ancient - message cooldown
     private final TTT plugin;
 
     public AntiClickBotListener(TTT plugin) {
@@ -46,11 +46,12 @@ public class AntiClickBotListener implements Listener {
 
         String randomString = getVerificationString(player.getUniqueId());
         if (!randomString.isEmpty()) {
+            if (messageCooldown(player, false)) // okocraft ancient - message cooldown
             player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, setting.verificationTimeout()));
             event.setCancelled(true);
             return;
         }
-        
+
         KillLog log = KILL_LOGS.computeIfAbsent(
                 player.getUniqueId(),
                 uid -> new KillLog(1, player.getLocation(), System.currentTimeMillis())
@@ -70,6 +71,7 @@ public class AntiClickBotListener implements Listener {
         if (log.killCount() > setting.killCountThreshold()) {
             randomString = randomAlphanumeric(3);
             WAITING_VERIFICATION.put(player.getUniqueId(), randomString);
+            messageCooldown(player, true); // okocraft ancient - message cooldown
             player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, setting.verificationTimeout()));
             new BukkitRunnable() {
                 @Override
@@ -125,9 +127,22 @@ public class AntiClickBotListener implements Listener {
 
         String randomString = getVerificationString(player.getUniqueId());
         if (!randomString.isEmpty()) {
+            if (messageCooldown(player, false)) // okocraft ancient - message cooldown
             player.sendMessage(Messages.VERIFY_CLICK_BOT.apply(randomString, plugin.getSetting().worldSetting(player.getWorld()).antiClickBotSetting().verificationTimeout()));
             event.setCancelled(true);
+        } else lastMessageTimeMap.remove(player.getUniqueId()); // okocraft ancient - message cooldown
+    }
+
+    // okocraft ancient - message cooldown
+    // if true, the message should be sent
+    private boolean messageCooldown(Player player, boolean forceUpdate) {
+        if (lastMessageTimeMap.getOrDefault(player.getUniqueId(), 0L) + 1000 < System.currentTimeMillis()) {
+            lastMessageTimeMap.put(player.getUniqueId(), System.currentTimeMillis());
+            return true;
+        } else if (forceUpdate) {
+            lastMessageTimeMap.put(player.getUniqueId(), System.currentTimeMillis());
         }
+        return false;
     }
 
     @EventHandler
